@@ -45,5 +45,4 @@ void   PutPixel(GdkPixbuf *pixbuf, int x, int y, guchar red, guchar green, gucha
 void   SortSurfaces();
 Vec3D  GetSurfaceNormal(Vec3D a, Vec3D b, Vec3D c);
 double DotProduct(Vec3D a, Vec3D b);
-int    Sign(int val);
 

@@ -26,6 +26,7 @@ static void   ProcessScanLine(GdkPixbuf *pixbuf, SCANLINEDATA data, Vec3D pa, Ve
 static double Interpolate(double min, double max, double gradient);
 static double Clamp(double value);
 static void   DrawGouraudTriangle(GdkPixbuf *pixbuf, Vec3D v1, Vec3D v2, Vec3D v3, Vec3D n1, Vec3D n2, Vec3D n3, ColourRef colour);
+int    Sign(int val);
 
 //#define DEBUG(x) g_print(x)
 #define DEBUG(x)
@@ -404,3 +405,25 @@ static double Clamp(double value)
 
 	return retVal;
 }
+
+// Java sdn function
+int Sign(int val)
+{
+	int vRet = 0;
+
+	if (val > 0)
+	{
+		vRet = 1;
+	}
+	else if (val < 0)
+	{
+		vRet = -1;
+	}
+	else
+	{
+		vRet = 0;
+	}
+
+	return vRet;
+}
+

@@ -2,7 +2,6 @@
 
 #include <stdio.h>
 #include "Vec3D.h"
-#include "Matrix4.h"
 
 #include <vector>
 
@@ -30,9 +29,9 @@ public:
 	bool LoadObjFile(char *path, char *file, double modelZoom);
 	void Mesh_normalise();
 
+	// TODO : Optimise - move to Vec3D ?
 	std::vector<Vec3D> data;
 	std::vector<Vec3D> tmp;
-
 	std::vector<Vec3D> normal;		// Original data
 	std::vector<Vec3D> tmpNorm;		// Rotated for display
 	std::vector<Vec3D> showNorm;	// Rotated and moved for show normals
@@ -49,3 +48,4 @@ private:
 	Vec3D Vector_CrossProduct(Vec3D &v1, Vec3D &v2);
 };
 
+// EOF

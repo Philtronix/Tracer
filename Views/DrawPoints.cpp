@@ -23,3 +23,5 @@ void DrawPoints(cairo_t *cr)
         cairo_rectangle(cr, x1, y1, 3, 3);
     }
 }
+
+// EOF

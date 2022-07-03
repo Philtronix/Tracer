@@ -10,6 +10,7 @@
 #include <math.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include "Matrix4.h"
 
 #include "tracer.h"
 #include "model.h"
@@ -20,8 +21,6 @@
 #include "Views/DrawFlat.h"
 #include "Views/DrawGouraud.h"
 #include "Views/DrawPhil.h"
-
-//#include "javid.h"
 
 #define NORMAL_LEN 20
 
@@ -58,8 +57,6 @@ Vec3D  target(0.0, 0.0, 0.0);
 double zbuffer[VIEWSCRWIDTH][VIEWSCRHEIGHT];
 item   sortList[9000];
 Vec3D  lightPos(10.0, 10.0, 10.0);
-
-//olcEngine3D javid;
 
 int main(int argc, char *argv[]) 
 {
@@ -356,40 +353,13 @@ void PutPixel(GdkPixbuf *pixbuf, int x, int y, guchar red, guchar green, guchar 
 
 // http://www.sunshine2k.de/coding/java/TriangleRasterization/TriangleRasterization.html
 
-// Java sdn function
-int Sign(int val)
-{
-	int vRet = 0;
-
-	if (val > 0)
-	{
-		vRet = 1;
-	}
-	else if (val < 0)
-	{
-		vRet = -1;
-	}
-	else
-	{
-		vRet = 0;
-	}
-
-	return vRet;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// NEW
-
 // a b c d     x   ax + by + cz + d
 // e f g h  *  y = ex + fy + gz + h
 // i j k l     z   ix + jy + kz + l
 // 0 0 0 1     1         1
 void ViewMatrix(Vec3D *result, Matrix4 *matrix, Vec3D *data)
 {
-	//model.tmp[i] = view * model.data[i];
 	result->x = (matrix->r1.x * data->x) + (matrix->r1.y * data->y) + (matrix->r1.z * data->z) + matrix->r1.x;
-//	result->y = (matrix->r2.x * data->x) + (matrix->r2.y * data->y) + (matrix->r2.z * data->z) + matrix->r1.y;
-//	result->z = (matrix->r3.x * data->x) + (matrix->r3.y * data->y) + (matrix->r3.z * data->z) + matrix->r1.z;
 	result->y = (matrix->r2.x * data->x) + (matrix->r2.y * data->y) + (matrix->r2.z * data->z) + matrix->r2.y;
 	result->z = (matrix->r3.x * data->x) + (matrix->r3.y * data->y) + (matrix->r3.z * data->z) + matrix->r3.z;
 	result->w = 1;
@@ -432,7 +402,6 @@ void DrawView(cairo_t *cr, int style)
 	// Radians = (degrees * pi) / 180;
 	double radPitch = (pitch * PI) / 180.0;
 	double radYaw = (yaw * PI) / 180.0;
-//	g_print("eye = (%.2f, %.2f, %.2f), pitch = %.2f, yaw = %.2f\r\n", eye.x, eye.y, eye.z, pitch, yaw);
 
 	// OLD
 	view.FPSViewRH(eye, radPitch, radYaw);
@@ -560,13 +529,11 @@ Vec3D GetSurfaceNormal(Vec3D a, Vec3D b, Vec3D c)
 
 	// Normalize vectors
 	double LengthAB = sqrt((VectorAB.x * VectorAB.x) + (VectorAB.y * VectorAB.y) + (VectorAB.z * VectorAB.z));
-	//VectorAB = { VectorAB.x / LengthAB, VectorAB.y / LengthAB, VectorAB.z / LengthAB };
 	VectorAB.x = VectorAB.x / LengthAB;
 	VectorAB.y = VectorAB.y / LengthAB;
 	VectorAB.z = VectorAB.z / LengthAB;
 
 	double LengthAC = sqrt((VectorAC.x * VectorAC.x) + (VectorAC.y * VectorAC.y) + (VectorAC.z * VectorAC.z));
-	//VectorAC = { VectorAC.x / LengthAC, VectorAC.y / LengthAC, VectorAC.z / LengthAC };
 	VectorAC.x = VectorAC.x / LengthAC;
 	VectorAC.y = VectorAC.y / LengthAC;
 	VectorAC.z = VectorAC.z / LengthAC;
@@ -618,4 +585,4 @@ void SortSurfaces()
 	DEBUG("SortSurfaces() done\r\n");
 }
 
-// [EOF]
+// EOF

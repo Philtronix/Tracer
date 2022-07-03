@@ -10,10 +10,8 @@ extern Vec3D      lightPos;
 extern GdkPixbuf  *pixbuf;
 
 // Local functions
-//static double VertexIntensity(Vec3D vertex);
 static double CalcIntensity(double ya, double yb, double yc, double ia, double ib);
 static void   CalcColour(double intensity, ColourRef *colour);
-
 static double Interpolate(double min, double max, double gradient);
 static void   ProcessScanLine(GdkPixbuf *pixbuf, int y, Point pa, Point pb, Point pc, Point pd, ColourRef colour);
 static void   DrawTriangle(GdkPixbuf *pixbuf, Point p1, Point p2, Point p3, ColourRef colour);
@@ -96,13 +94,6 @@ void DrawPhil(cairo_t *cr)
         n3 = model.tmpNorm[p3];
 
 		// Vertex intensity
-//		p2d1.intensity = VertexIntensity(p2d1.normal);
-//		p2d2.intensity = VertexIntensity(p2d2.normal);
-//		p2d3.intensity = VertexIntensity(p2d3.normal);
-
-//		p2d1.intensity = ComputeNDotL(v1, n1, lightPos);
-//		p2d2.intensity = ComputeNDotL(v2, n2, lightPos);
-//		p2d3.intensity = ComputeNDotL(v3, n3, lightPos);
 		p2d1.intensity = ComputeNDotL(model.tmp[p1], n1, lightPos);
 		p2d2.intensity = ComputeNDotL(model.tmp[p2], n2, lightPos);
 		p2d3.intensity = ComputeNDotL(model.tmp[p3], n3, lightPos);
@@ -129,33 +120,6 @@ void DrawPhil(cairo_t *cr)
     }
 //    DEBUG("DrawPhil() - [done]\r\n");
 }
-
-/*
-static double VertexIntensity(Vec3D vertex)
-{
-	// Light position 
-	Vec3D tmp = lightPos;
-	tmp.normalise();
-
-	// 	DotProduct = acos(a.x * b.x + a.y * b.y + a.z * b.z);
-	double angle = DotProduct(vertex, tmp);
-
-	// Bounds from 0 to Pi/2
-	if (angle > (PI / 2.0))
-	{
-		angle = (PI / 2.0);
-	}
-	else if (angle < 0)
-	{
-		angle = 0;
-	}
-
-	// Normalise angle
-	angle /= (PI / 2.0);
-
-	return angle;
-}
-*/
 
 // Clamping values to keep them between 0 and 1
 static double Clamp(double value)
@@ -203,25 +167,18 @@ void ProcessScanLine(GdkPixbuf *pixbuf, int y, Point pa, Point pb, Point pc, Poi
 
     double snl = Interpolate(pa.intensity, pb.intensity, gradient1);
     double enl = Interpolate(pc.intensity, pd.intensity, gradient2);
-//	printf("\r\n%.2f %.2f : ", snl, enl);
-//	printf("%.2f %.2f\r\n", gradient1, gradient2);
 
 	ColourRef cTmp;
 
 	// Drawing a line from left (sx) to right (ex) 
 	for (int x = sx; x < ex; x++)
 	{
-//		PutPixel(pixbuf, x, y, colour.red, colour.green, colour.blue);
-
         double gradient = ((double)(x - sx)) / ((double)(ex - sx));
 
 		// TODO : store Z buffer
 //        double z = Interpolate(z1, z2, gradient);
 
         double ndotl = Interpolate(snl, enl, gradient);
-//		printf("%.2f %.2f\r\n", gradient, ndotl);
-//		printf("%.2f ", gradient);
-//		printf("%.2f ", ndotl);
 
         // Changing the color value using the cosine of the angle
         // between the light vector and the normal vector
@@ -230,20 +187,6 @@ void ProcessScanLine(GdkPixbuf *pixbuf, int y, Point pa, Point pb, Point pc, Poi
 		cTmp.blue  = colour.blue  * ndotl;
 		PutPixel(pixbuf, x, y, cTmp.red, cTmp.green, cTmp.blue);
 	}
-
-/*
-    for (var x = sx; x < ex; x++)
-    {
-        float gradient = (x - sx) / (float)(ex - sx);
-
-        var z = Interpolate(z1, z2, gradient);
-        var ndotl = Interpolate(snl, enl, gradient);
-        // changing the color value using the cosine of the angle
-        // between the light vector and the normal vector
-        DrawPoint(new Vector3(x, data.currentY, z), color * ndotl);
-    }
-
-*/
 
 	if (sx > ex)
 	{
@@ -257,14 +200,9 @@ void ProcessScanLine(GdkPixbuf *pixbuf, int y, Point pa, Point pb, Point pc, Poi
 // Returns intensity at c
 static double CalcIntensity(double ya, double yb, double yc, double ia, double ib)
 {
-//	return (((yc - ya) / (yb - ya) * ib) +
-//		    ((yb - yc) / (yb - ya) * ia));
-
 	double val;
 	val =  (((yc - ya) / (yb - ya) * ib) +
 		    ((yb - yc) / (yb - ya) * ia));
-//	val =  (((yc - yb) / (ya - yb) * ia) +
-//		    ((ya - yc) / (ya - yb) * ib));
 
 	if (val < 0)
 	{
@@ -311,6 +249,11 @@ static void CalcColour(double intensity, ColourRef *colour)
 
 static void DrawTriangle(GdkPixbuf *pixbuf, Point p1, Point p2, Point p3, ColourRef colour)
 {
+	ColourRef	tmp = colour;
+	double		intensity;
+	double		dP1P2;
+	double		dP1P3;
+
 	// Sorting the points in order to always have this order on screen p1, p2 & p3
 	// with p1 always up (thus having the Y the lowest possible to be near the top screen)
 	// then p2 between p1 & p3
@@ -334,11 +277,6 @@ static void DrawTriangle(GdkPixbuf *pixbuf, Point p1, Point p2, Point p3, Colour
 		p2 = p1;
 		p1 = temp;
 	}
-
-//	g_print("%.2f %.2f %.2f\r\n", p1.vertex.y, p2.vertex.y, p3.vertex.y);
-
-	// inverse slopes
-	double dP1P2, dP1P3;
 
 	// http://en.wikipedia.org/wiki/Slope
 	// Computing inverse slopes
@@ -373,30 +311,20 @@ static void DrawTriangle(GdkPixbuf *pixbuf, Point p1, Point p2, Point p3, Colour
 	// P3         Highest Y
 	if (dP1P2 > dP1P3)
 	{
-		ColourRef	tmp = colour;
-		double		intensity;
 		for (int y = (int)p1.vertex.y; y <= (int)p3.vertex.y; y++)
 		{
 			if (y < p2.vertex.y)
 			{
 				// 1..3, 1..2
 				intensity = CalcIntensity(p1.vertex.y, p3.vertex.y, y, p1.intensity, p3.intensity);
-//				intensity = CalcIntensity(p1.vertex.y, p3.vertex.y, y, p1.intensity, p2.intensity);
 				CalcColour(intensity, &tmp);
-//				tmp.red   = 255;
-//				tmp.green = 0;
-//				tmp.blue  = 0;
 				ProcessScanLine(pixbuf, y, p1, p3, p1, p2, tmp);
 			}
 			else
 			{
 				// 1..3, 2..3
 				intensity = CalcIntensity(p1.vertex.y, p3.vertex.y, y, p1.intensity, p3.intensity);
-//				intensity = CalcIntensity(p1.vertex.y, p3.vertex.y, y, p2.intensity, p3.intensity);
 				CalcColour(intensity, &tmp);
-//				tmp.red   = 0;
-//				tmp.green = 255;
-//				tmp.blue  = 0;
 				ProcessScanLine(pixbuf, y, p1, p3, p2, p3, tmp);
 			}
 		}
@@ -414,32 +342,24 @@ static void DrawTriangle(GdkPixbuf *pixbuf, Point p1, Point p2, Point p3, Colour
 	//       P3  Highest Y
 	else
 	{
-		ColourRef	tmp = colour;
-		double		intensity;
 		for (int y = (int)p1.vertex.y; y <= (int)p3.vertex.y; y++)
 		{
 			if (y < p2.vertex.y)
 			{
 				// 1..2, 1..3
 				intensity = CalcIntensity(p1.vertex.y, p2.vertex.y, y, p1.intensity, p2.intensity);
-//				intensity = CalcIntensity(p1.vertex.y, p2.vertex.y, y, p1.intensity, p3.intensity);
 				CalcColour(intensity, &tmp);
-//				tmp.red   = 255;
-//				tmp.green = 0;
-//				tmp.blue  = 0;
 				ProcessScanLine(pixbuf, y, p1, p2, p1, p3, tmp);
 			}
 			else
 			{
 				// 2..3, 1..3
 				intensity = CalcIntensity(p2.vertex.y, p3.vertex.y, y, p2.intensity, p3.intensity);
-//				intensity = CalcIntensity(p2.vertex.y, p3.vertex.y, y, p1.intensity, p3.intensity);
 				CalcColour(intensity, &tmp);
-//				tmp.red   = 0;
-//				tmp.green = 255;
-//				tmp.blue  = 0;
 				ProcessScanLine(pixbuf, y, p2, p3, p1, p3, tmp);
 			}
 		}
 	}
 }
+
+// EOF

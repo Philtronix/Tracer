@@ -66,6 +66,9 @@ void Create(int recursionLevel)
 {
     // Create 12 vertices of a icosahedron
     double t = (1.0 + sqrt(5.0)) / 2.0;
+    int a;
+    int b;
+    int c;
 
     AddVertex(-1,  t,  0);  //  0
     AddVertex( 1,  t,  0);  //  1
@@ -122,9 +125,9 @@ void Create(int recursionLevel)
         {
             // Replace triangle by 4 triangles
             // Creates or finds the point and returns its index
-            int a = GetMiddlePoint(sphere.surfaces[s].p1, sphere.surfaces[s].p2);
-            int b = GetMiddlePoint(sphere.surfaces[s].p2, sphere.surfaces[s].p3);
-            int c = GetMiddlePoint(sphere.surfaces[s].p3, sphere.surfaces[s].p1);
+            a = GetMiddlePoint(sphere.surfaces[s].p1, sphere.surfaces[s].p2);
+            b = GetMiddlePoint(sphere.surfaces[s].p2, sphere.surfaces[s].p3);
+            c = GetMiddlePoint(sphere.surfaces[s].p3, sphere.surfaces[s].p1);
 
             faces2.push_back(SURFACE{sphere.surfaces[s].p1, a, c});
             faces2.push_back(SURFACE{sphere.surfaces[s].p2, b, a});
@@ -139,7 +142,7 @@ void Create(int recursionLevel)
         }
     }
 
-    // Now copy into main model
+    // Copy surfaces into main model
     for (int i = 0; i < (int)sphere.surfaces.size(); i++)
     {
         model.surfaces.push_back(sphere.surfaces[i]);
@@ -151,6 +154,7 @@ void Create(int recursionLevel)
     }
     model.numSurf += sphere.surfaces.size();
     
+    // Copy points into main model
     for (int i = 0; i < (int)sphere.data.size(); i++)
     {
         model.data.push_back(sphere.data[i]);
@@ -158,6 +162,8 @@ void Create(int recursionLevel)
     }
     model.numP += sphere.data.size();
 
+    // Expand size
+    // Rename this "radius" ?
     model.zoom = 200;
     for (int i = 0; i < (int)sphere.data.size(); i++)
     {
@@ -169,3 +175,4 @@ void Create(int recursionLevel)
     printf("Vertex   = %d\r\nNormals  = %d\r\nSurfaces = %d\r\n", model.numP, model.numNorm, model.numSurf);
 }
 
+// EOF

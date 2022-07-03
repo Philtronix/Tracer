@@ -5,3 +5,5 @@
 #include <gtk/gtkx.h>
 
 void DrawWire(cairo_t *cr);
+
+// EOF

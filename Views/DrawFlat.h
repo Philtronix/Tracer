@@ -5,3 +5,5 @@
 #include <gtk/gtkx.h>
 
 void DrawFlat(cairo_t *cr);
+
+// EOF

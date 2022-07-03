@@ -586,3 +586,5 @@ static void DrawTriangle(GdkPixbuf *pixbuf, Vec3D p1, Vec3D p2, Vec3D p3, Colour
 		}
 	}
 }
+
+// EOF

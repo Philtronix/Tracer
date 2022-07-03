@@ -5,3 +5,5 @@
 #include <gtk/gtkx.h>
 
 void DrawPhil(cairo_t *cr);
+
+// EOF

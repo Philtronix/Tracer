@@ -18,8 +18,6 @@ void DrawWire(cairo_t *cr)
     //g_print("view wire\r\n");
     for (i = 0; i < model.numSurf; i++)
     {
-        //g_print("%d %d %d (%d)\r\n", p1, p2, p3, model.numSurf);
-
         p1 = model.surfaces[i].p1 - 1;	// Model point numbers start at 1
         p2 = model.surfaces[i].p2 - 1;
         p3 = model.surfaces[i].p3 - 1;
@@ -30,3 +28,5 @@ void DrawWire(cairo_t *cr)
         cairo_line_to(cr, (int)(model.tmp[p1].x * zoom) + w, (int)(model.tmp[p1].y * zoom) + h);
     }
 }
+
+// EOF
