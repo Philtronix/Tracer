@@ -10,7 +10,7 @@ http://www.sunshine2k.de/coding/java/TriangleRasterization/TriangleRasterization
 http://en.wikipedia.org/wiki/Slope
 
 TODO :
-1. Delete Gouraud and rename DrawPhil.cpp .h
+1. Delete Gouraud and rename DrawPhil.cpp .h - [done]
 2. Mske icosphere into class based on model
 3. Add support for mulyiple models
 4. Optimise, points normals etc.

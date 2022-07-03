@@ -5,3 +5,5 @@
 #include <gtk/gtkx.h>
 
 void DrawGouraud(cairo_t *cr);
+
+// EOF
