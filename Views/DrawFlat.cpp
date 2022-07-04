@@ -9,28 +9,12 @@ extern item       sortList[9000];
 extern Vec3D      lightPos;
 extern GdkPixbuf  *pixbuf;
 
-/*
-typedef struct
-{
-	int x;
-	int y;
-} Point2D;
-*/
-
-// Local functions
-//static void FillFlatSideTriangle(GdkPixbuf *pixbuf, Point2D v1, Point2D v2, Point2D v3, ColourRef colour);
-//static void DrawFlatFilledTriangle(GdkPixbuf *pixbuf, Point2D v1, Point2D v2, Point2D v3, ColourRef colour);
-//static void DrawLine(GdkPixbuf *pixbuf, Point2D p1, Point2D p2, ColourRef colour);
-//static void SortVerticesAscendingByY(Point2D *v1, Point2D *v2, Point2D *v3);
-
-// TEST
 static double Interpolate(double min, double max, double gradient);
 static void   ProcessScanLine(GdkPixbuf *pixbuf, int y, Vec3D pa, Vec3D pb, Vec3D pc, Vec3D pd, ColourRef colour);
 static void   DrawTriangle(GdkPixbuf *pixbuf, Vec3D p1, Vec3D p2, Vec3D p3, ColourRef colour);
 static double Clamp(double value);
-static double bob(Vec3D v1, Vec3D v2, Vec3D v3, Vec3D n1, Vec3D n2, Vec3D n3);
+static double CalcIntensity(Vec3D v1, Vec3D v2, Vec3D v3, Vec3D n1, Vec3D n2, Vec3D n3);
 static void CalcColour(double angle, ColourRef *colour);
-// TEST
 
 //#define DEBUG(x) g_print(x)
 #define DEBUG(x)
@@ -49,19 +33,11 @@ void DrawFlat(cairo_t *cr)
 	Vec3D	n1;
 	Vec3D	n2;
 	Vec3D	n3;
-//    Point2D p2d1;
-//    Point2D p2d2;
-//    Point2D p2d3;
 	ColourRef	colour;
 
     DEBUG("DrawFlat() \r\n");
     for (i = 0; i < model.numSurf; i++)
     {
-        // Unsorted
-//		p1 = model.surfaces[i].p1 - 1;
-//		p2 = model.surfaces[i].p2 - 1;
-//		p3 = model.surfaces[i].p3 - 1;
-
         // Sorted
         p1 = model.surfaces[sortList[i].surface].p1 - 1;
         p2 = model.surfaces[sortList[i].surface].p2 - 1;
@@ -85,35 +61,10 @@ void DrawFlat(cairo_t *cr)
         n2 = model.tmpNorm[p2];
         n3 = model.tmpNorm[p3];
 
-		//g_print("view filled\r\n");
 		// Work out surface colour
-/*
-		Vec3D surfaceNormal = GetSurfaceNormal(v1, v2, v3);
-        
-        // Light position 
-        //g_print("lightPos = (%.2f, %.2f, %.2f)\r\n", lightPos.x, lightPos.y, lightPos.z);
-        Vec3D tmp = lightPos;
-        tmp.normalise();
-        double angle = DotProduct(surfaceNormal, tmp);
+		double intensity = CalcIntensity(v1, v2, v3, n1, n2, n3);
+		CalcColour(intensity, &colour);
 
-        // Bounds from 0 to Pi/2
-        if (angle > (PI / 2.0))
-        {
-            angle = (PI / 2.0);
-        }
-        else if (angle < 0)
-        {
-            angle = 0;
-        }
-
-        // Normalise angle
-        angle /= (PI / 2.0);
-*/
-		double angle = bob(v1, v2, v3, n1, n2, n3);
-
-		CalcColour(angle, &colour);
-
-        //DrawFlatFilledTriangle(pixbuf, p2d1, p2d2, p2d3, colour);
         DrawTriangle(pixbuf, v1, v2, v3, colour); // TEST
 
         // Now draw borders
@@ -131,7 +82,7 @@ static void CalcColour(double angle, ColourRef *colour)
 	int green;
 	int blue;
 
-	// ambient
+	// Ambient
 	angle += 0.1;
 
 	red   = FLAT_RED   * angle;
@@ -183,7 +134,7 @@ static double ComputeNDotL(Vec3D vertex, Vec3D normal, Vec3D lightPosition)
 	return retVal;
 }
 
-static double bob(Vec3D v1, Vec3D v2, Vec3D v3, Vec3D n1, Vec3D n2, Vec3D n3)
+static double CalcIntensity(Vec3D v1, Vec3D v2, Vec3D v3, Vec3D n1, Vec3D n2, Vec3D n3)
 {
     // Normal face's vector is the average normal between each vertex's normal
     // computing also the center point of the face
@@ -201,224 +152,6 @@ static double bob(Vec3D v1, Vec3D v2, Vec3D v3, Vec3D n1, Vec3D n2, Vec3D n3)
     // it will return a value between 0 and 1 that will be used as the intensity of the color
     return ComputeNDotL(centerPoint, vnFace, lightPos);
  }
-
-/*
-// Draw flat filled Triangle
-static void DrawFlatFilledTriangle(GdkPixbuf *pixbuf, Point2D v1, Point2D v2, Point2D v3, ColourRef colour)
-{
-	Point2D vt1 = v1;
-	Point2D vt2 = v2;
-	Point2D vt3 = v3;
-
-    DEBUG("DrawFlatFilledTriangle()\r\n");
-
-	// At first sort the three vertices by y-coordinate ascending, 
-	// so p1 is the topmost vertice
-	SortVerticesAscendingByY(&vt1, &vt2, &vt3);
-	
-	// Here we know that v1.y <= v2.y <= v3.y
-	// Bottom-flat triangle
-	if (vt2.y == vt3.y)
-	{
-		FillFlatSideTriangle(pixbuf, vt1, vt2, vt3, colour);
-	}
-	// Top-flat triangle
-	else if (vt1.y == vt2.y)
-	{
-		FillFlatSideTriangle(pixbuf, vt3, vt1, vt2, colour);
-	} 
-	else
-	{
-		// General case - split the triangle in a topflat and bottom-flat one
-		Point2D vTmp;
-		vTmp.x = (int)(vt1.x + ((float)(vt2.y - vt1.y) / (float)(vt3.y - vt1.y)) * (vt3.x - vt1.x));
-		vTmp.y = vt2.y;
-		FillFlatSideTriangle(pixbuf, vt1, vt2, vTmp, colour);
-		FillFlatSideTriangle(pixbuf, vt3, vt2, vTmp, colour);
-	}
-
-    DEBUG("DrawFlatFilledTriangle() - [done]\r\n");
-}
-*/
-
-/*
-// Sort the three vertices ascending by y-coordinate.
-// After calling following applies: vt1.y <= vt2.y <= vt3.y
-static void SortVerticesAscendingByY(Point2D *v1, Point2D *v2, Point2D *v3)
-{
-	Point2D	vTmp;
-
-	if (v1->y > v2->y)
-	{
-		vTmp = *v1;
-		*v1 = *v2;
-		*v2 = vTmp;
-	}
-
-	// Here v1.y <= v2.y
-	if (v1->y > v3->y)
-	{
-		vTmp = *v1;
-		*v1 = *v3;
-		*v3 = vTmp;
-	}
-
-	// Here v1.y <= v2.y and v1.y <= v3.y so test v2 vs. v3
-	if (v2->y > v3->y)
-	{
-		vTmp = *v2;
-		*v2 = *v3;
-		*v3 = vTmp;
-	}
-}
-*/
-
-/*
-// This method rasterizes a triangle using only integer variables by using a
-// modified bresenham algorithm.
-// It's important that v2 and v3 lie on the same horizontal line, that is
-// v2.y must be equal to v3.y.
-static void FillFlatSideTriangle(GdkPixbuf *pixbuf, Point2D v1, Point2D v2, Point2D v3, ColourRef colour)
-{
-    DEBUG("FillFlatSideTriangle() ");
-
-	Point2D vTmp1 = v1;
-	Point2D vTmp2 = v1;
-	
-	bool changed1 = false;
-	bool changed2 = false;
-	
-	int dx1 = abs(v2.x - v1.x);
-	int dy1 = abs(v2.y - v1.y);
-	
-	int dx2 = abs(v3.x - v1.x);
-	int dy2 = abs(v3.y - v1.y);
-	
-	int signx1 = Sign(v2.x - v1.x);
-	int signx2 = Sign(v3.x - v1.x);
-	
-	int signy1 = Sign(v2.y - v1.y);
-	int signy2 = Sign(v3.y - v1.y);
-	
-	if (dy1 > dx1)
-	{ 
-		// Swap values
-		int tmp = dx1;
-		dx1 = dy1;
-		dy1 = tmp;
-		changed1 = true;
-	}
-	
-	if (dy2 > dx2)
-	{
-		// Swap values
-		int tmp = dx2;
-		dx2 = dy2;
-		dy2 = tmp;
-		changed2 = true;
-	}
-	
-	int e1 = 2 * dy1 - dx1;
-	int e2 = 2 * dy2 - dx2;
-
-    // Prevent exception
-    if (0 == dx1)
-    {
-        g_print("Boom\r\n");
-        dx1 = 1;
-    }
-
-	for (int i = 0; i <= dx1; i++)
-	{
-		// Draw line
-		DrawLine(pixbuf, vTmp1, vTmp2, colour);
-
-		while (e1 >= 0)
-		{
-			if (changed1)
-			{
-				vTmp1.x += signx1;
-			}
-			else
-			{
-				vTmp1.y += signy1;
-			}
-			e1 = e1 - 2 * dx1;
-		}
-		
-		if (changed1)
-		{
-			vTmp1.y += signy1;
-		}
-		else
-		{
-			vTmp1.x += signx1;
-		}
-		
-		e1 = e1 + 2 * dy1;
-		
-//        DEBUG("2");
-		// Here we rendered the next point on line 1 so follow now line 2
-		// until we are on the same y-value as line 1.
-		while (vTmp2.y != vTmp1.y)
-		{
-			while (e2 >= 0)
-			{
-				if (changed2)
-				{
-					vTmp2.x += signx2;
-				}
-				else
-				{
-					vTmp2.y += signy2;
-				}
-				e2 = e2 - 2 * dx2;
-			}
-
-			if (changed2)
-			{
-				vTmp2.y += signy2;
-			}
-			else
-			{
-				vTmp2.x += signx2;
-			}
-
-			e2 = e2 + 2 * dy2;
-		}
-	}
-
-    DEBUG("- [done]\r\n");
-}
-*/
-
-/*
-static void DrawLine(GdkPixbuf *pixbuf, Point2D p1, Point2D p2, ColourRef colour)
-{
-	int x1;
-	int x2;
-
-	// Ensure left - right drawing
-	if (p1.x < p2.x)
-	{
-		x1 = p1.x;
-		x2 = p2.x;
-	}
-	else
-	{
-		x1 = p2.x;
-		x2 = p1.x;
-	}
-
-	for (int x = x1; x <= x2; x++)
-	{
-		PutPixel(pixbuf, x, p1.y, colour.red, colour.green, colour.blue);
-	}
-}
-*/
-
-///////////////////////////////////////////////////////////////////////////////
-// New test routines
 
 // Clamping values to keep them between 0 and 1
 static double Clamp(double value)

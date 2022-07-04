@@ -115,15 +115,15 @@ int main(int argc, char *argv[])
 //		model.LoadObjFile(szPath, (char *)"/Models/Monkey.obj", 160);		// Texture, normals
 //		model.LoadObjFile(szPath, (char *)"/Models/Teapot_2.obj", 3);		// Normals
 //		model.LoadObjFile(szPath, (char *)"/Models/icosahedron.obj", 150);	// Normals
-		model.LoadObjFile(szPath, (char *)"/Models/BigTeapot.obj", 100);	// -
+//		model.LoadObjFile(szPath, (char *)"/Models/BigTeapot.obj", 100);	// -
 //		model.LoadObjFile(szPath, (char *)"/Models/Teapot.obj", 6);			// Texture. normals
 //		model.LoadObjFile(szPath, (char *)"/Models/cube.obj", 100);			// Texture, normals
 
 		// Create an Icosphere
-//		Create(3);
+		Icosphere sphere1(100, 1);
 
 		// Add Normals
-//		model.Mesh_normalise();
+		model.Mesh_normalise();
 	}
 	else
 	{

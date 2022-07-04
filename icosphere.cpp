@@ -2,6 +2,7 @@
 #include <sys/types.h>
 #include <math.h>
 #include "model.h"
+#include "icosphere.h"
 #include <map>
 
 // http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
@@ -13,7 +14,7 @@ Model sphere;
 std::map<int, int> middlePointIndexCache;
 
 // Add vertex to mesh, fix position to be on unit sphere, return index
-int AddVertex(double x, double y, double z)
+int Icosphere::AddVertex(double x, double y, double z)
 {
     double length = sqrt((x * x) + (y * y) + (z * z));
     double vx = x / length;
@@ -31,7 +32,7 @@ int AddVertex(double x, double y, double z)
 }
 
 // Return index of point in the middle of p1 and p2
-int GetMiddlePoint(int p1, int p2)
+int Icosphere::GetMiddlePoint(int p1, int p2)
 {
     // First check if we have it already
     bool firstIsSmaller = p1 < p2;
@@ -62,7 +63,12 @@ int GetMiddlePoint(int p1, int p2)
     return i;
 }
 
-void Create(int recursionLevel)
+Icosphere::~Icosphere()
+{
+
+}
+
+Icosphere::Icosphere(int radius, int recursionLevel)
 {
     // Create 12 vertices of a icosahedron
     double t = (1.0 + sqrt(5.0)) / 2.0;
@@ -162,16 +168,17 @@ void Create(int recursionLevel)
     }
     model.numP += sphere.data.size();
 
-    // Expand size
-    // Rename this "radius" ?
-    model.zoom = 200;
+    // Correct size
     for (int i = 0; i < (int)sphere.data.size(); i++)
     {
-        model.data[i].x *= model.zoom;
-        model.data[i].y *= model.zoom;
-        model.data[i].z *= model.zoom;
+        model.data[i].x *= radius;
+        model.data[i].y *= radius;
+        model.data[i].z *= radius;
     }
-    
+
+    // Other variables    
+    model.zoom = 1;
+
     printf("Vertex   = %d\r\nNormals  = %d\r\nSurfaces = %d\r\n", model.numP, model.numNorm, model.numSurf);
 }
 

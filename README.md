@@ -11,7 +11,7 @@ http://en.wikipedia.org/wiki/Slope
 
 TODO :
 1. Delete Gouraud and rename DrawPhil.cpp .h - [done]
-2. Mske icosphere into class based on model
+2. Make icosphere into class based on model - [done]
 3. Add support for mulyiple models
 4. Optimise, points normals etc.
 5. Move vector maths to Vec3D.cpp
