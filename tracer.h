@@ -37,8 +37,9 @@ struct ColourRef
 
 typedef struct
 {
-	double avz;
-	int    surface;
+	double	avz;
+	int		model;
+	int		surface;
 } item;
 
 void   PutPixel(GdkPixbuf *pixbuf, int x, int y, guchar red, guchar green, guchar blue);

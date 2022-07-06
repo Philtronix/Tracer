@@ -3,7 +3,8 @@
 #include "../tracer.h"
 #include "../model.h"
 
-extern Model      model;
+extern Model      model[];
+extern int        numModel;
 extern int        zoom;
 extern item       sortList[9000];
 extern Vec3D      lightPos;
@@ -17,8 +18,8 @@ static void   ProcessScanLine(GdkPixbuf *pixbuf, int y, Point pa, Point pb, Poin
 static void   DrawTriangle(GdkPixbuf *pixbuf, Point p1, Point p2, Point p3, ColourRef colour);
 static double ComputeNDotL(Vec3D vertex, Vec3D normal, Vec3D lightPosition);
 
-#define DEBUG(x) g_print(x)
-//#define DEBUG(x)
+//#define DEBUG(x) g_print(x)
+#define DEBUG(x)
 
 // Compute the cosine of the angle between the light vector and the normal vector
 // Returns a value between 0 and 1
@@ -60,43 +61,52 @@ void DrawGouraud(cairo_t *cr)
     Point p2d2;
     Point p2d3;
 	ColourRef	colour;
+	int		m;
+	int		numSurf;
 
- //   DEBUG("DrawPhil()\r\n");
-    for (i = 0; i < model.numSurf; i++)
-    {
+	numSurf = 0;
+	for (int i = 0; i < numModel; i++)
+	{
+		numSurf += model[i].numSurf;
+	}
+
+    DEBUG("DrawGouraud()\r\n");
+	for (i = 0; i < numSurf; i++)
+	{
 		// TODO : Replace sorted with Z buffer
         // Unsorted
 //		p1 = model.surfaces[i].p1 - 1;
 //		p2 = model.surfaces[i].p2 - 1;
 //		p3 = model.surfaces[i].p3 - 1;
+		m = sortList[i].model;
 
-        // Sorted
-        p1 = model.surfaces[sortList[i].surface].p1 - 1;
-        p2 = model.surfaces[sortList[i].surface].p2 - 1;
-        p3 = model.surfaces[sortList[i].surface].p3 - 1;
+		// Sorted
+		p1 = model[m].surfaces[sortList[i].surface].p1 - 1;
+		p2 = model[m].surfaces[sortList[i].surface].p2 - 1;
+		p3 = model[m].surfaces[sortList[i].surface].p3 - 1;
 
         // Filled triangle
-        v1.x = (model.tmp[p1].x * zoom) + w;
-        v1.y = (model.tmp[p1].y * zoom) + h;
-        v1.z = (model.tmp[p1].z * zoom);
+        v1.x = (model[m].tmp[p1].x * zoom) + w;
+        v1.y = (model[m].tmp[p1].y * zoom) + h;
+        v1.z = (model[m].tmp[p1].z * zoom);
 
-        v2.x = (model.tmp[p2].x * zoom) + w;
-        v2.y = (model.tmp[p2].y * zoom) + h;
-        v2.z = (model.tmp[p2].z * zoom);
+        v2.x = (model[m].tmp[p2].x * zoom) + w;
+        v2.y = (model[m].tmp[p2].y * zoom) + h;
+        v2.z = (model[m].tmp[p2].z * zoom);
 
-        v3.x = (model.tmp[p3].x * zoom) + w;
-        v3.y = (model.tmp[p3].y * zoom) + h;
-        v3.z = (model.tmp[p3].z * zoom);
+        v3.x = (model[m].tmp[p3].x * zoom) + w;
+        v3.y = (model[m].tmp[p3].y * zoom) + h;
+        v3.z = (model[m].tmp[p3].z * zoom);
 
         // Normals
-        n1 = model.tmpNorm[p1];
-        n2 = model.tmpNorm[p2];
-        n3 = model.tmpNorm[p3];
+        n1 = model[m].tmpNorm[p1];
+        n2 = model[m].tmpNorm[p2];
+        n3 = model[m].tmpNorm[p3];
 
 		// Vertex intensity
-		p2d1.intensity = ComputeNDotL(model.tmp[p1], n1, lightPos);
-		p2d2.intensity = ComputeNDotL(model.tmp[p2], n2, lightPos);
-		p2d3.intensity = ComputeNDotL(model.tmp[p3], n3, lightPos);
+		p2d1.intensity = ComputeNDotL(model[m].tmp[p1], n1, lightPos);
+		p2d2.intensity = ComputeNDotL(model[m].tmp[p2], n2, lightPos);
+		p2d3.intensity = ComputeNDotL(model[m].tmp[p3], n3, lightPos);
 
         p2d1.vertex = v1;
         p2d2.vertex = v2;
@@ -118,7 +128,7 @@ void DrawGouraud(cairo_t *cr)
         //cairo_line_to(cr, (int)v3.x, (int)v3.y);
         //cairo_line_to(cr, (int)v1.x, (int)v1.y);
     }
-//    DEBUG("DrawPhil() - [done]\r\n");
+    DEBUG("DrawGouraud() - [done]\r\n");
 }
 
 // Clamping values to keep them between 0 and 1

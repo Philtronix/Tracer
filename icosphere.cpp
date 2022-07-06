@@ -1,17 +1,9 @@
 #include "Vec3D.h"
 #include <sys/types.h>
 #include <math.h>
-#include "model.h"
 #include "icosphere.h"
-#include <map>
 
 // http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
-
-extern Model model;
-Model sphere;
-
-// Create a map that stores strings indexed by strings
-std::map<int, int> middlePointIndexCache;
 
 // Add vertex to mesh, fix position to be on unit sphere, return index
 int Icosphere::AddVertex(double x, double y, double z)
@@ -21,14 +13,15 @@ int Icosphere::AddVertex(double x, double y, double z)
     double vy = y / length;
     double vz = z / length;
 
-    sphere.data.push_back(Vec3D(vx, vy, vz));           // Model
-    sphere.normal.push_back(Vec3D(vx, vy, vz));         // Model
-    sphere.tmpNorm.push_back(Vec3D(0.0, 0.0, 0.0));     // Rotated
-    sphere.showNorm.push_back(Vec3D(0.0, 0.0, 0.0));    // Rotated & stretched
+    data.push_back(Vec3D(vx, vy, vz));           // Model
+    tmp.push_back(Vec3D(0.0, 0.0, 0.0));         // Model
+    normal.push_back(Vec3D(0.0, 0.0, 0.0));      // Model
+    tmpNorm.push_back(Vec3D(0.0, 0.0, 0.0));     // Rotated
+    showNorm.push_back(Vec3D(0.0, 0.0, 0.0));    // Rotated & stretched
 
-    sphere.numP++;
+    numP++;
 
-    return (sphere.numP - 1);
+    return (numP - 1);
 }
 
 // Return index of point in the middle of p1 and p2
@@ -49,8 +42,8 @@ int Icosphere::GetMiddlePoint(int p1, int p2)
     }
 
     // Not in cache, calculate it
-    Vec3D point1 = sphere.data[p1];
-    Vec3D point2 = sphere.data[p2];
+    Vec3D point1 = data[p1];
+    Vec3D point2 = data[p2];
     Vec3D middle = Vec3D((point1.x + point2.x) / 2.0, 
                          (point1.y + point2.y) / 2.0, 
                          (point1.z + point2.z) / 2.0);
@@ -68,7 +61,7 @@ Icosphere::~Icosphere()
 
 }
 
-Icosphere::Icosphere(int radius, int recursionLevel)
+Icosphere::Icosphere(int radius, int recursionLevel, Vec3D pos)
 {
     // Create 12 vertices of a icosahedron
     double t = (1.0 + sqrt(5.0)) / 2.0;
@@ -94,32 +87,32 @@ Icosphere::Icosphere(int radius, int recursionLevel)
     // Create 20 triangles of the icosahedron
 
     // 5 faces around point 0
-    sphere.surfaces.push_back(SURFACE{0, 11,  5});
-    sphere.surfaces.push_back(SURFACE{0,  5,  1});
-    sphere.surfaces.push_back(SURFACE{0,  1,  7});
-    sphere.surfaces.push_back(SURFACE{0,  7, 10});
-    sphere.surfaces.push_back(SURFACE{0, 10, 11});
+    surfaces.push_back(SURFACE{0, 11,  5});
+    surfaces.push_back(SURFACE{0,  5,  1});
+    surfaces.push_back(SURFACE{0,  1,  7});
+    surfaces.push_back(SURFACE{0,  7, 10});
+    surfaces.push_back(SURFACE{0, 10, 11});
 
     // 5 adjacent faces 
-    sphere.surfaces.push_back(SURFACE{ 1,  5, 9});
-    sphere.surfaces.push_back(SURFACE{ 5, 11, 4});
-    sphere.surfaces.push_back(SURFACE{11, 10, 2});
-    sphere.surfaces.push_back(SURFACE{10,  7, 6});
-    sphere.surfaces.push_back(SURFACE{ 7,  1, 8});
+    surfaces.push_back(SURFACE{ 1,  5, 9});
+    surfaces.push_back(SURFACE{ 5, 11, 4});
+    surfaces.push_back(SURFACE{11, 10, 2});
+    surfaces.push_back(SURFACE{10,  7, 6});
+    surfaces.push_back(SURFACE{ 7,  1, 8});
 
     // 5 faces around point 3
-    sphere.surfaces.push_back(SURFACE{3, 9, 4});
-    sphere.surfaces.push_back(SURFACE{3, 4, 2});
-    sphere.surfaces.push_back(SURFACE{3, 2, 6});
-    sphere.surfaces.push_back(SURFACE{3, 6, 8});
-    sphere.surfaces.push_back(SURFACE{3, 8, 9});
+    surfaces.push_back(SURFACE{3, 9, 4});
+    surfaces.push_back(SURFACE{3, 4, 2});
+    surfaces.push_back(SURFACE{3, 2, 6});
+    surfaces.push_back(SURFACE{3, 6, 8});
+    surfaces.push_back(SURFACE{3, 8, 9});
 
     // 5 adjacent faces 
-    sphere.surfaces.push_back(SURFACE{4, 9,  5});
-    sphere.surfaces.push_back(SURFACE{2, 4, 11});
-    sphere.surfaces.push_back(SURFACE{6, 2, 10});
-    sphere.surfaces.push_back(SURFACE{8, 6,  7});
-    sphere.surfaces.push_back(SURFACE{9, 8,  1});
+    surfaces.push_back(SURFACE{4, 9,  5});
+    surfaces.push_back(SURFACE{2, 4, 11});
+    surfaces.push_back(SURFACE{6, 2, 10});
+    surfaces.push_back(SURFACE{8, 6,  7});
+    surfaces.push_back(SURFACE{9, 8,  1});
 
     std::vector<SURFACE> faces2;
 
@@ -127,59 +120,62 @@ Icosphere::Icosphere(int radius, int recursionLevel)
     for (int i = 0; i < recursionLevel; i++)
     {
         faces2.clear();
-        for (int s = 0; s < (int) sphere.surfaces.size(); s++)
+        for (int s = 0; s < (int) surfaces.size(); s++)
         {
             // Replace triangle by 4 triangles
             // Creates or finds the point and returns its index
-            a = GetMiddlePoint(sphere.surfaces[s].p1, sphere.surfaces[s].p2);
-            b = GetMiddlePoint(sphere.surfaces[s].p2, sphere.surfaces[s].p3);
-            c = GetMiddlePoint(sphere.surfaces[s].p3, sphere.surfaces[s].p1);
+            a = GetMiddlePoint(surfaces[s].p1, surfaces[s].p2);
+            b = GetMiddlePoint(surfaces[s].p2, surfaces[s].p3);
+            c = GetMiddlePoint(surfaces[s].p3, surfaces[s].p1);
 
-            faces2.push_back(SURFACE{sphere.surfaces[s].p1, a, c});
-            faces2.push_back(SURFACE{sphere.surfaces[s].p2, b, a});
-            faces2.push_back(SURFACE{sphere.surfaces[s].p3, c, b});
+            faces2.push_back(SURFACE{surfaces[s].p1, a, c});
+            faces2.push_back(SURFACE{surfaces[s].p2, b, a});
+            faces2.push_back(SURFACE{surfaces[s].p3, c, b});
             faces2.push_back(SURFACE{a, b, c});
         }
 
-        sphere.surfaces.clear();
+        surfaces.clear();
         for (int s = 0; s < (int)faces2.size(); s++)
         {
-            sphere.surfaces.push_back(faces2[s]);
+            surfaces.push_back(faces2[s]);
         }
     }
 
     // Copy surfaces into main model
-    for (int i = 0; i < (int)sphere.surfaces.size(); i++)
+    for (int i = 0; i < (int)surfaces.size(); i++)
     {
-        model.surfaces.push_back(sphere.surfaces[i]);
-
         // Fix the obj index start at 1 "bug"
-        model.surfaces[i].p1++;
-        model.surfaces[i].p2++;
-        model.surfaces[i].p3++;
+        surfaces[i].p1++;
+        surfaces[i].p2++;
+        surfaces[i].p3++;
     }
-    model.numSurf += sphere.surfaces.size();
-    
-    // Copy points into main model
-    for (int i = 0; i < (int)sphere.data.size(); i++)
-    {
-        model.data.push_back(sphere.data[i]);
-        model.tmp.push_back(sphere.data[i]);
-    }
-    model.numP += sphere.data.size();
 
     // Correct size
-    for (int i = 0; i < (int)sphere.data.size(); i++)
+    for (int i = 0; i < (int)data.size(); i++)
     {
-        model.data[i].x *= radius;
-        model.data[i].y *= radius;
-        model.data[i].z *= radius;
+        data[i].x *= radius;
+        data[i].y *= radius;
+        data[i].z *= radius;
+    }
+
+    // Correct size
+    for (int i = 0; i < (int)data.size(); i++)
+    {
+        data[i].x += pos.x;
+        data[i].y += pos.y;
+        data[i].z += pos.z;
     }
 
     // Other variables    
-    model.zoom = 1;
+    numSurf = surfaces.size();
+    numP = data.size();
+    zoom = 1;
 
-    printf("Vertex   = %d\r\nNormals  = %d\r\nSurfaces = %d\r\n", model.numP, model.numNorm, model.numSurf);
+	Mesh_normalise();
+
+    middlePointIndexCache.clear();
+
+    printf("Vertex   = %d\r\nNormals  = %d\r\nSurfaces = %d\r\n", numP, numNorm, numSurf);
 }
 
 // EOF

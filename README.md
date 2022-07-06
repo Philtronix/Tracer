@@ -12,8 +12,11 @@ http://en.wikipedia.org/wiki/Slope
 TODO :
 1. Delete Gouraud and rename DrawPhil.cpp .h - [done]
 2. Make icosphere into class based on model - [done]
-3. Add support for mulyiple models
+3. Add support for mulyiple models - [done]
 4. Optimise, points normals etc.
 5. Move vector maths to Vec3D.cpp
 6. Add Phong
 7. Z buffer gouraud (leave fill on sort)
+
+BUGS :
+1. Low poly icosphere shows odd effects

@@ -4,6 +4,10 @@
 
 Model::Model()
 {
+	numP = 0;
+	numSurf = 0;
+	numNorm = 0;
+	zoom = 1.0;
 }
 
 Model::~Model()

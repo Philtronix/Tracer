@@ -3,7 +3,8 @@
 #include "../tracer.h"
 #include "../model.h"
 
-extern Model      model;
+extern Model      model[];
+extern int        numModel;
 extern int        zoom;
 extern item       sortList[9000];
 extern Vec3D      lightPos;
@@ -14,7 +15,7 @@ static void   ProcessScanLine(GdkPixbuf *pixbuf, int y, Vec3D pa, Vec3D pb, Vec3
 static void   DrawTriangle(GdkPixbuf *pixbuf, Vec3D p1, Vec3D p2, Vec3D p3, ColourRef colour);
 static double Clamp(double value);
 static double CalcIntensity(Vec3D v1, Vec3D v2, Vec3D v3, Vec3D n1, Vec3D n2, Vec3D n3);
-static void CalcColour(double angle, ColourRef *colour);
+static void   CalcColour(double angle, ColourRef *colour);
 
 //#define DEBUG(x) g_print(x)
 #define DEBUG(x)
@@ -34,45 +35,56 @@ void DrawFlat(cairo_t *cr)
 	Vec3D	n2;
 	Vec3D	n3;
 	ColourRef	colour;
+	int		m;
+	int		numSurf;
 
-    DEBUG("DrawFlat() \r\n");
-    for (i = 0; i < model.numSurf; i++)
-    {
-        // Sorted
-        p1 = model.surfaces[sortList[i].surface].p1 - 1;
-        p2 = model.surfaces[sortList[i].surface].p2 - 1;
-        p3 = model.surfaces[sortList[i].surface].p3 - 1;
+	numSurf = 0;
+	for (int i = 0; i < numModel; i++)
+	{
+		numSurf += model[i].numSurf;
+	}
 
-        // Filled triangle
-        v1.x = (model.tmp[p1].x * zoom) + w;
-        v1.y = (model.tmp[p1].y * zoom) + h;
-        v1.z = (model.tmp[p1].z * zoom);
 
-        v2.x = (model.tmp[p2].x * zoom) + w;
-        v2.y = (model.tmp[p2].y * zoom) + h;
-        v2.z = (model.tmp[p2].z * zoom);
+    DEBUG("DrawFlat()\r\n");
+	for (i = 0; i < numSurf; i++)
+	{
+		m = sortList[i].model;
 
-        v3.x = (model.tmp[p3].x * zoom) + w;
-        v3.y = (model.tmp[p3].y * zoom) + h;
-        v3.z = (model.tmp[p3].z * zoom);
+		// Sorted
+		p1 = model[m].surfaces[sortList[i].surface].p1 - 1;
+		p2 = model[m].surfaces[sortList[i].surface].p2 - 1;
+		p3 = model[m].surfaces[sortList[i].surface].p3 - 1;
 
-        // Normals
-        n1 = model.tmpNorm[p1];
-        n2 = model.tmpNorm[p2];
-        n3 = model.tmpNorm[p3];
+		// Filled triangle
+		v1.x = (model[m].tmp[p1].x * zoom) + w;
+		v1.y = (model[m].tmp[p1].y * zoom) + h;
+		v1.z = (model[m].tmp[p1].z * zoom);
+
+		v2.x = (model[m].tmp[p2].x * zoom) + w;
+		v2.y = (model[m].tmp[p2].y * zoom) + h;
+		v2.z = (model[m].tmp[p2].z * zoom);
+
+		v3.x = (model[m].tmp[p3].x * zoom) + w;
+		v3.y = (model[m].tmp[p3].y * zoom) + h;
+		v3.z = (model[m].tmp[p3].z * zoom);
+
+		// Normals
+		n1 = model[m].tmpNorm[p1];
+		n2 = model[m].tmpNorm[p2];
+		n3 = model[m].tmpNorm[p3];
 
 		// Work out surface colour
 		double intensity = CalcIntensity(v1, v2, v3, n1, n2, n3);
 		CalcColour(intensity, &colour);
 
-        DrawTriangle(pixbuf, v1, v2, v3, colour); // TEST
+		DrawTriangle(pixbuf, v1, v2, v3, colour); // TEST
 
-        // Now draw borders
-        //cairo_move_to(cr, (int)v1.x, (int)v1.y);
-        //cairo_line_to(cr, (int)v2.x, (int)v2.y);
-        //cairo_line_to(cr, (int)v3.x, (int)v3.y);
-        //cairo_line_to(cr, (int)v1.x, (int)v1.y);
-    }
+		// Now draw borders
+		//cairo_move_to(cr, (int)v1.x, (int)v1.y);
+		//cairo_line_to(cr, (int)v2.x, (int)v2.y);
+		//cairo_line_to(cr, (int)v3.x, (int)v3.y);
+		//cairo_line_to(cr, (int)v1.x, (int)v1.y);
+	}
     DEBUG("DrawFlat() - [done]\r\n");
 }
 

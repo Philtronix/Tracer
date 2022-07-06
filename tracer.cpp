@@ -41,7 +41,8 @@ int   n_channels;
 int   rowstride;
 int   pixWidth;
 int   pixHeight;
-Model model;
+Model model[3];
+int   numModel = 0;
 char  szPath[400];
 bool  showNormals = false;
 int   view = VIEW_WIRE;
@@ -112,18 +113,30 @@ int main(int argc, char *argv[])
 	// Load model
 	if (getcwd(szPath, sizeof(szPath)) != NULL)
 	{
-//		model.LoadObjFile(szPath, (char *)"/Models/Monkey.obj", 160);		// Texture, normals
-//		model.LoadObjFile(szPath, (char *)"/Models/Teapot_2.obj", 3);		// Normals
-//		model.LoadObjFile(szPath, (char *)"/Models/icosahedron.obj", 150);	// Normals
-//		model.LoadObjFile(szPath, (char *)"/Models/BigTeapot.obj", 100);	// -
-//		model.LoadObjFile(szPath, (char *)"/Models/Teapot.obj", 6);			// Texture. normals
-//		model.LoadObjFile(szPath, (char *)"/Models/cube.obj", 100);			// Texture, normals
+//		model[0].LoadObjFile(szPath, (char *)"/Models/Monkey.obj", 160);		// Texture, normals
+//		model[0].LoadObjFile(szPath, (char *)"/Models/Teapot_2.obj", 3);		// Normals
+//		model[0].LoadObjFile(szPath, (char *)"/Models/icosahedron.obj", 150);	// Normals
+//		model[0].LoadObjFile(szPath, (char *)"/Models/BigTeapot.obj", 100);	// -
+//		model[0].LoadObjFile(szPath, (char *)"/Models/Teapot.obj", 6);			// Texture. normals
+//		model[0].LoadObjFile(szPath, (char *)"/Models/cube.obj", 100);			// Texture, normals
 
 		// Create an Icosphere
-		Icosphere sphere1(100, 1);
+		Vec3D pos;
+		pos.x = 0.0;
+		pos.y = 0.0;
+		pos.z = 0.0;
+		model[0] = Icosphere(100, 3, pos);
 
-		// Add Normals
-		model.Mesh_normalise();
+		pos.x = 200.0;
+		pos.y = 0.0;
+		pos.z = 0.0;
+		model[1] = Icosphere(50, 2, pos);
+
+		pos.x = 0.0;
+		pos.y = 200.0;
+		pos.z = 0.0;
+		model[2] = Icosphere(75, 2, pos);
+		numModel = 3;
 	}
 	else
 	{
@@ -410,36 +423,39 @@ void DrawView(cairo_t *cr, int style)
 //	Vec3D vUp = { 0.0, 1.0, 0.0 };
 //	view.LookAtRH(eye, target, vUp);
 
-	// Move the points
-	DEBUG("points");
-	for (i = 0; i < model.numP; i++)
+	for (int m = 0; m < numModel; m++)
 	{
-		ViewMatrix(&model.tmp[i], &view, &(model.data[i]));
-	}
-	DEBUG(" - [done]\r\n");
-
-	// Move the normals
-	if (showNormals)
-	{
-		DEBUG("show normals");
-		for (i = 0; i < model.numNorm; i++)
+		// Move the points
+		DEBUG("points ");
+		for (i = 0; i < model[m].numP; i++)
 		{
-			tmpVec = model.data[i];
-			tmpVec.x += model.normal[i].x * NORMAL_LEN;
-			tmpVec.y += model.normal[i].y * NORMAL_LEN;
-			tmpVec.z += model.normal[i].z * NORMAL_LEN;
+			ViewMatrix(&model[m].tmp[i], &view, &(model[m].data[i]));
+		}
+		DEBUG("- [done]\r\n");
 
-			ViewMatrix(&model.showNorm[i], &view, &tmpVec);
+		// Move the normals
+		if (showNormals)
+		{
+			DEBUG("show normals");
+			for (i = 0; i < model[m].numNorm; i++)
+			{
+				tmpVec = model[m].data[i];
+				tmpVec.x += model[m].normal[i].x * NORMAL_LEN;
+				tmpVec.y += model[m].normal[i].y * NORMAL_LEN;
+				tmpVec.z += model[m].normal[i].z * NORMAL_LEN;
+
+				ViewMatrix(&model[m].showNorm[i], &view, &tmpVec);
+			}
+			DEBUG(" - [done]\r\n");
+		}
+
+		DEBUG("normals");
+		for (i = 0; i < model[m].numNorm; i++)
+		{
+			ViewMatrix(&model[m].tmpNorm[i], &view, &model[m].normal[i]);
 		}
 		DEBUG(" - [done]\r\n");
 	}
-
-	DEBUG("normals");
-	for (i = 0; i < model.numNorm; i++)
-	{
-		ViewMatrix(&model.tmpNorm[i], &view, &model.normal[i]);
-	}
-	DEBUG(" - [done]\r\n");
 
 	switch (style)
 	{
@@ -482,16 +498,16 @@ void DrawView(cairo_t *cr, int style)
 		cairo_stroke(cr);
 		cairo_set_source_rgb(cr, 1.0, 0.0, 0.0);
 
-		for (i = 0; i < model.numP; i++)
+		for (i = 0; i < model[0].numP; i++)
 		{
 			// Only show normal if it is visible
-			if (model.showNorm[i].z > 0)
+			if (model[0].showNorm[i].z > 0)
 			{
-				x1 = (int)(model.tmp[i].x * zoom) + w;
-				y1 = (int)(model.tmp[i].y * zoom) + h;
+				x1 = (int)(model[0].tmp[i].x * zoom) + w;
+				y1 = (int)(model[0].tmp[i].y * zoom) + h;
 
-				x2 = (int)(model.showNorm[i].x * zoom) + w;
-				y2 = (int)(model.showNorm[i].y * zoom) + h;
+				x2 = (int)(model[0].showNorm[i].x * zoom) + w;
+				y2 = (int)(model[0].showNorm[i].y * zoom) + h;
 
 				cairo_move_to(cr, x1, y1);
 				cairo_line_to(cr, x2, y2);
@@ -550,25 +566,32 @@ void SortSurfaces()
 
 	DEBUG("SortSurfaces()\r\n");
 
-	// Calculate average Z values
-	for (int i = 0; i < model.numSurf; i++)
+	int s = 0;
+	for (int m = 0; m < numModel; m++)
 	{
-		p1 = model.surfaces[i].p1 - 1;	// Model point numbers start at 1
-		p2 = model.surfaces[i].p2 - 1;
-		p3 = model.surfaces[i].p3 - 1;
+		// Calculate average Z values
+		for (int i = 0; i < model[m].numSurf; i++)
+		{
+			p1 = model[m].surfaces[i].p1 - 1;	// Model point numbers start at 1
+			p2 = model[m].surfaces[i].p2 - 1;
+			p3 = model[m].surfaces[i].p3 - 1;
 
-		sortList[i].avz = (model.tmp[p1].z + model.tmp[p2].z + model.tmp[p3].z) / 3;
-		sortList[i].surface = i;
+			sortList[s].avz = (model[m].tmp[p1].z + model[m].tmp[p2].z + model[m].tmp[p3].z) / 3;
+			sortList[s].surface = i;
+			sortList[s].model = m;
+			s++;
+		}
 	}
 
-	DEBUG("SortSurfaces() bubble\r\n");
+	int numsurf = s;
+	DEBUG("SortSurfaces()\r\n");
 
 	// Now  perform a bubble sort
 	// loop to access each array element
-	for (int step = 0; step < model.numSurf - 1; ++step)
+	for (int step = 0; step < numsurf - 1; ++step)
 	{
 		// loop to compare array elements
-		for (int i = 0; i < model.numSurf - step - 1; ++i)
+		for (int i = 0; i < numsurf - step - 1; ++i)
 		{
 			// compare two adjacent elements
 			// change > to < to sort in descending order
