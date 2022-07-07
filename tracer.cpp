@@ -5,8 +5,6 @@
 #include <signal.h>
 #include <unistd.h>
 #include <string.h>
-#include <gtk/gtk.h>
-#include <gtk/gtkx.h>
 #include <math.h>
 #include <ctype.h>
 #include <stdbool.h>
@@ -55,7 +53,6 @@ double yaw = 0.0;
 int    zoom = 1;
 Vec3D  eye(0.0, 0.0, 0.0);
 Vec3D  target(0.0, 0.0, 0.0);
-double zbuffer[VIEWSCRWIDTH][VIEWSCRHEIGHT];
 item   sortList[9000];
 Vec3D  lightPos(10.0, 10.0, 10.0);
 
@@ -116,9 +113,10 @@ int main(int argc, char *argv[])
 //		model[0].LoadObjFile(szPath, (char *)"/Models/Monkey.obj", 160);		// Texture, normals
 //		model[0].LoadObjFile(szPath, (char *)"/Models/Teapot_2.obj", 3);		// Normals
 //		model[0].LoadObjFile(szPath, (char *)"/Models/icosahedron.obj", 150);	// Normals
-//		model[0].LoadObjFile(szPath, (char *)"/Models/BigTeapot.obj", 100);	// -
+//		model[0].LoadObjFile(szPath, (char *)"/Models/BigTeapot.obj", 100);		// -
 //		model[0].LoadObjFile(szPath, (char *)"/Models/Teapot.obj", 6);			// Texture. normals
 //		model[0].LoadObjFile(szPath, (char *)"/Models/cube.obj", 100);			// Texture, normals
+//		model[0].LoadObjFile(szPath, (char *)"/Models/axis.obj", 20);			// -
 
 		// Create an Icosphere
 		Vec3D pos;
@@ -131,12 +129,16 @@ int main(int argc, char *argv[])
 		pos.y = 0.0;
 		pos.z = 0.0;
 		model[1] = Icosphere(50, 2, pos);
+		model[1].SetColour(ColourRef{255, 0, 0});
 
 		pos.x = 0.0;
 		pos.y = 200.0;
 		pos.z = 0.0;
 		model[2] = Icosphere(75, 2, pos);
+		model[2].SetColour(ColourRef{0, 255, 0});
+
 		numModel = 3;
+
 	}
 	else
 	{
@@ -401,17 +403,6 @@ void DrawView(cairo_t *cr, int style)
 
 	DEBUG("DrawView()\r\n");
 
-/*
-	// Clear zBuffer
-	for (int y = 0; y < VIEWSCRHEIGHT; y++)
-	{
-		for (int x = 0; x < VIEWSCRWIDTH; x++)
-		{
-			zbuffer[x][y] = -50000;
-		}
-	}
-*/
-
 	// Radians = (degrees * pi) / 180;
 	double radPitch = (pitch * PI) / 180.0;
 	double radYaw = (yaw * PI) / 180.0;
@@ -473,7 +464,7 @@ void DrawView(cairo_t *cr, int style)
 		break;
 
 	case VIEW_GOURAUD:
-		SortSurfaces();
+//		SortSurfaces();
 		DrawGouraud(cr);
 		break;
 

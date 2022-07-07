@@ -8,6 +8,9 @@ Model::Model()
 	numSurf = 0;
 	numNorm = 0;
 	zoom = 1.0;
+	objColour.red   = FLAT_RED;
+	objColour.green = FLAT_GREEN;
+	objColour.blue  = FLAT_BLUE;
 }
 
 Model::~Model()
@@ -372,6 +375,11 @@ int Model::ReadLine(char *dst, int *nBytes, FILE *fp)
 	dst[iLen] = 0;
 
 	return num;
+}
+
+void Model::SetColour(ColourRef colour)
+{
+    objColour = colour;
 }
 
 // EOF

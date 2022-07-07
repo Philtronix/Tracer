@@ -75,6 +75,7 @@ void DrawFlat(cairo_t *cr)
 
 		// Work out surface colour
 		double intensity = CalcIntensity(v1, v2, v3, n1, n2, n3);
+		colour = model[m].objColour;
 		CalcColour(intensity, &colour);
 
 		DrawTriangle(pixbuf, v1, v2, v3, colour); // TEST
@@ -97,9 +98,9 @@ static void CalcColour(double angle, ColourRef *colour)
 	// Ambient
 	angle += 0.1;
 
-	red   = FLAT_RED   * angle;
-	green = FLAT_GREEN * angle;
-	blue  = FLAT_BLUE  * angle;
+	red   = colour->red   * angle;
+	green = colour->green * angle;
+	blue  = colour->blue  * angle;
 
 	if (red > 255)
 	{

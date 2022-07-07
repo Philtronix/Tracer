@@ -2,8 +2,13 @@
 
 #include <stdio.h>
 #include "Vec3D.h"
+#include "tracer.h"
 
 #include <vector>
+
+#define FLAT_RED   50.0
+#define FLAT_GREEN 150.0
+#define FLAT_BLUE  250.0
 
 typedef struct SURFACETAG
 {
@@ -28,6 +33,7 @@ public:
 	
 	bool LoadObjFile(char *path, char *file, double modelZoom);
 	void Mesh_normalise();
+    void SetColour(ColourRef colour);
 
 	// TODO : Optimise - move to Vec3D ?
 	std::vector<Vec3D> data;
@@ -38,10 +44,11 @@ public:
 
 	std::vector<SURFACE> surfaces;
 
-	int		numP;
-	int		numSurf;
-	int		numNorm;
-	double	zoom;
+	int			numP;
+	int			numSurf;
+	int			numNorm;
+	double		zoom;
+    ColourRef	objColour;
 
 private:
 	int   ReadLine(char *dst, int *nBytes, FILE *fp);

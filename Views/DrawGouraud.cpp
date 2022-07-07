@@ -10,6 +10,8 @@ extern item       sortList[9000];
 extern Vec3D      lightPos;
 extern GdkPixbuf  *pixbuf;
 
+double zbuffer[VIEWSCRWIDTH][VIEWSCRHEIGHT];
+
 // Local functions
 static double CalcIntensity(double ya, double yb, double yc, double ia, double ib);
 static void   CalcColour(double intensity, ColourRef *colour);
@@ -20,6 +22,99 @@ static double ComputeNDotL(Vec3D vertex, Vec3D normal, Vec3D lightPosition);
 
 //#define DEBUG(x) g_print(x)
 #define DEBUG(x)
+
+void DrawGouraud(cairo_t *cr)
+{
+    int i;
+	int	h = (VIEWSCRHEIGHT / 2);
+	int	w = (VIEWSCRWIDTH / 2);
+	int	p1;
+	int	p2;
+	int	p3;
+	Vec3D v1;
+	Vec3D v2;
+	Vec3D v3;
+	Vec3D n1;
+	Vec3D n2;
+	Vec3D n3;
+    Point p2d1;
+    Point p2d2;
+    Point p2d3;
+	ColourRef	colour;
+//	int		m;
+
+    DEBUG("DrawGouraud()\r\n");
+
+	// Clear zBuffer
+	for (int y = 0; y < VIEWSCRHEIGHT; y++)
+	{
+		for (int x = 0; x < VIEWSCRWIDTH; x++)
+		{
+			zbuffer[x][y] = -50000;
+		}
+	}
+
+	for (int m = 0; m < numModel; m++)
+	{
+		for (i = 0; i < model[m].numSurf; i++)
+		{
+			// Unsorted
+			p1 = model[m].surfaces[i].p1 - 1;
+			p2 = model[m].surfaces[i].p2 - 1;
+			p3 = model[m].surfaces[i].p3 - 1;
+
+			// Sorted
+//			m = sortList[i].model;
+//			p1 = model[m].surfaces[sortList[i].surface].p1 - 1;
+//			p2 = model[m].surfaces[sortList[i].surface].p2 - 1;
+//			p3 = model[m].surfaces[sortList[i].surface].p3 - 1;
+
+			// Filled triangle
+			v1.x = (model[m].tmp[p1].x * zoom) + w;
+			v1.y = (model[m].tmp[p1].y * zoom) + h;
+			v1.z = (model[m].tmp[p1].z * zoom);
+
+			v2.x = (model[m].tmp[p2].x * zoom) + w;
+			v2.y = (model[m].tmp[p2].y * zoom) + h;
+			v2.z = (model[m].tmp[p2].z * zoom);
+
+			v3.x = (model[m].tmp[p3].x * zoom) + w;
+			v3.y = (model[m].tmp[p3].y * zoom) + h;
+			v3.z = (model[m].tmp[p3].z * zoom);
+
+			// Normals
+			n1 = model[m].tmpNorm[p1];
+			n2 = model[m].tmpNorm[p2];
+			n3 = model[m].tmpNorm[p3];
+
+			// Vertex intensity
+			p2d1.intensity = ComputeNDotL(model[m].tmp[p1], n1, lightPos);
+			p2d2.intensity = ComputeNDotL(model[m].tmp[p2], n2, lightPos);
+			p2d3.intensity = ComputeNDotL(model[m].tmp[p3], n3, lightPos);
+
+			p2d1.vertex = v1;
+			p2d2.vertex = v2;
+			p2d3.vertex = v3;
+
+			p2d1.normal = n1;
+			p2d2.normal = n2;
+			p2d3.normal = n3;
+
+			colour.red   = FLAT_RED;
+			colour.green = FLAT_GREEN;
+			colour.blue  = FLAT_BLUE;
+
+			DrawTriangle(pixbuf, p2d1, p2d2, p2d3, colour);
+
+			// Now draw borders
+			//cairo_move_to(cr, (int)v1.x, (int)v1.y);
+			//cairo_line_to(cr, (int)v2.x, (int)v2.y);
+			//cairo_line_to(cr, (int)v3.x, (int)v3.y);
+			//cairo_line_to(cr, (int)v1.x, (int)v1.y);
+		}
+	}
+    DEBUG("DrawGouraud() - [done]\r\n");
+}
 
 // Compute the cosine of the angle between the light vector and the normal vector
 // Returns a value between 0 and 1
@@ -41,94 +136,6 @@ static double ComputeNDotL(Vec3D vertex, Vec3D normal, Vec3D lightPosition)
 	{
 		return 0;
 	}
-}
-
-void DrawGouraud(cairo_t *cr)
-{
-    int i;
-	int	h = (VIEWSCRHEIGHT / 2);
-	int	w = (VIEWSCRWIDTH / 2);
-	int	p1;
-	int	p2;
-	int	p3;
-	Vec3D v1;
-	Vec3D v2;
-	Vec3D v3;
-	Vec3D n1;
-	Vec3D n2;
-	Vec3D n3;
-    Point p2d1;
-    Point p2d2;
-    Point p2d3;
-	ColourRef	colour;
-	int		m;
-	int		numSurf;
-
-	numSurf = 0;
-	for (int i = 0; i < numModel; i++)
-	{
-		numSurf += model[i].numSurf;
-	}
-
-    DEBUG("DrawGouraud()\r\n");
-	for (i = 0; i < numSurf; i++)
-	{
-		// TODO : Replace sorted with Z buffer
-        // Unsorted
-//		p1 = model.surfaces[i].p1 - 1;
-//		p2 = model.surfaces[i].p2 - 1;
-//		p3 = model.surfaces[i].p3 - 1;
-		m = sortList[i].model;
-
-		// Sorted
-		p1 = model[m].surfaces[sortList[i].surface].p1 - 1;
-		p2 = model[m].surfaces[sortList[i].surface].p2 - 1;
-		p3 = model[m].surfaces[sortList[i].surface].p3 - 1;
-
-        // Filled triangle
-        v1.x = (model[m].tmp[p1].x * zoom) + w;
-        v1.y = (model[m].tmp[p1].y * zoom) + h;
-        v1.z = (model[m].tmp[p1].z * zoom);
-
-        v2.x = (model[m].tmp[p2].x * zoom) + w;
-        v2.y = (model[m].tmp[p2].y * zoom) + h;
-        v2.z = (model[m].tmp[p2].z * zoom);
-
-        v3.x = (model[m].tmp[p3].x * zoom) + w;
-        v3.y = (model[m].tmp[p3].y * zoom) + h;
-        v3.z = (model[m].tmp[p3].z * zoom);
-
-        // Normals
-        n1 = model[m].tmpNorm[p1];
-        n2 = model[m].tmpNorm[p2];
-        n3 = model[m].tmpNorm[p3];
-
-		// Vertex intensity
-		p2d1.intensity = ComputeNDotL(model[m].tmp[p1], n1, lightPos);
-		p2d2.intensity = ComputeNDotL(model[m].tmp[p2], n2, lightPos);
-		p2d3.intensity = ComputeNDotL(model[m].tmp[p3], n3, lightPos);
-
-        p2d1.vertex = v1;
-        p2d2.vertex = v2;
-        p2d3.vertex = v3;
-
-        p2d1.normal = n1;
-        p2d2.normal = n2;
-        p2d3.normal = n3;
-
-        colour.red   = FLAT_RED;
-        colour.green = FLAT_GREEN;
-        colour.blue  = FLAT_BLUE;
-
-		DrawTriangle(pixbuf, p2d1, p2d2, p2d3, colour);
-
-        // Now draw borders
-        //cairo_move_to(cr, (int)v1.x, (int)v1.y);
-        //cairo_line_to(cr, (int)v2.x, (int)v2.y);
-        //cairo_line_to(cr, (int)v3.x, (int)v3.y);
-        //cairo_line_to(cr, (int)v1.x, (int)v1.y);
-    }
-    DEBUG("DrawGouraud() - [done]\r\n");
 }
 
 // Clamping values to keep them between 0 and 1
@@ -178,24 +185,32 @@ void ProcessScanLine(GdkPixbuf *pixbuf, int y, Point pa, Point pb, Point pc, Poi
     double snl = Interpolate(pa.intensity, pb.intensity, gradient1);
     double enl = Interpolate(pc.intensity, pd.intensity, gradient2);
 
+    double z1 = Interpolate(pa.vertex.z, pb.vertex.z, gradient1);
+    double z2 = Interpolate(pc.vertex.z, pd.vertex.z, gradient2);
+
 	ColourRef cTmp;
+	double gradient;
+	double z;
+	double ndotl;
 
 	// Drawing a line from left (sx) to right (ex) 
 	for (int x = sx; x < ex; x++)
 	{
-        double gradient = ((double)(x - sx)) / ((double)(ex - sx));
+        gradient = ((double)(x - sx)) / ((double)(ex - sx));
 
-		// TODO : store Z buffer
-//        double z = Interpolate(z1, z2, gradient);
+        z = Interpolate(z1, z2, gradient);
+		if (z > zbuffer[x][y])
+		{
+			zbuffer[x][y] = z;
+			ndotl = Interpolate(snl, enl, gradient);
 
-        double ndotl = Interpolate(snl, enl, gradient);
-
-        // Changing the color value using the cosine of the angle
-        // between the light vector and the normal vector
-		cTmp.red   = colour.red   * ndotl;
-		cTmp.green = colour.green * ndotl;
-		cTmp.blue  = colour.blue  * ndotl;
-		PutPixel(pixbuf, x, y, cTmp.red, cTmp.green, cTmp.blue);
+			// Changing the color value using the cosine of the angle
+			// between the light vector and the normal vector
+			cTmp.red   = colour.red   * ndotl;
+			cTmp.green = colour.green * ndotl;
+			cTmp.blue  = colour.blue  * ndotl;
+			PutPixel(pixbuf, x, y, cTmp.red, cTmp.green, cTmp.blue);
+		}
 	}
 
 	if (sx > ex)

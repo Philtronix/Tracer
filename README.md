@@ -16,7 +16,9 @@ TODO :
 4. Optimise, points normals etc.
 5. Move vector maths to Vec3D.cpp
 6. Add Phong
-7. Z buffer gouraud (leave fill on sort)
+7. Z buffer gouraud (leave fill on sort) - [done]
 
 BUGS :
 1. Low poly icosphere shows odd effects
+2. Monkey.obj in Gouraud shows "RED" errors
+3. Teapot_2.obj in Gouraud, pitch = 0 shows black lines on shading

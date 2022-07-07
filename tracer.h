@@ -2,6 +2,9 @@
 
 #include "Vec3D.h"
 #include <sys/types.h>
+#include <stdint.h>
+#include <gtk/gtk.h>
+#include <gtk/gtkx.h>
 
 #define SWAP(a,b)  { Vec3D *tmp; tmp = a; a = b; b = tmp; }
 #define SUB_PIX(a) (ceil(a)-a)
@@ -13,10 +16,6 @@
 #define VIEW_GOURAUD	4
 #define VIEW_PHONG		5
 #define VIEW_RAYTRACE	6
-
-#define FLAT_RED   50.0
-#define FLAT_GREEN 150.0
-#define FLAT_BLUE  250.0
 
 #define VIEWSCRWIDTH	640
 #define VIEWSCRHEIGHT	480

@@ -16,5 +16,4 @@ private:
 
     // Create a map that stores strings indexed by strings
     std::map<int, int> middlePointIndexCache;
-
 };
