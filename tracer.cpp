@@ -13,6 +13,7 @@
 #include "tracer.h"
 #include "model.h"
 #include "icosphere.h"
+#include "Rectangle.h"
 
 #include "Views/DrawPoints.h"
 #include "Views/DrawWire.h"
@@ -39,7 +40,7 @@ int   n_channels;
 int   rowstride;
 int   pixWidth;
 int   pixHeight;
-Model model[3];
+Model model[10];
 int   numModel = 0;
 char  szPath[400];
 bool  showNormals = false;
@@ -55,6 +56,122 @@ Vec3D  eye(0.0, 0.0, 0.0);
 Vec3D  target(0.0, 0.0, 0.0);
 item   sortList[9000];
 Vec3D  lightPos(10.0, 10.0, 10.0);
+
+///////////////////////////////////////////////
+/*
+static GtkTargetEntry entries[] = {
+  { "GTK_LIST_BOX_ROW", GTK_TARGET_SAME_APP, 0 }
+};
+
+
+static void
+drag_begin (GtkWidget      *widget,
+            GdkDragContext *context,
+            gpointer        data)
+{
+  GtkWidget *row;
+  GtkAllocation alloc;
+  cairo_surface_t *surface;
+  cairo_t *cr;
+  int x, y;
+  double sx, sy;
+
+  row = gtk_widget_get_ancestor (widget, GTK_TYPE_LIST_BOX_ROW);
+  gtk_widget_get_allocation (row, &alloc);
+  surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, alloc.width, alloc.height);
+  cr = cairo_create (surface);
+
+  gtk_style_context_add_class (gtk_widget_get_style_context (row), "drag-icon");
+  gtk_widget_draw (row, cr);
+  gtk_style_context_remove_class (gtk_widget_get_style_context (row), "drag-icon");
+
+  gtk_widget_translate_coordinates (widget, row, 0, 0, &x, &y);
+  cairo_surface_get_device_scale (surface, &sx, &sy);
+  cairo_surface_set_device_offset (surface, -x * sx, -y * sy);
+  gtk_drag_set_icon_surface (context, surface);
+
+  cairo_destroy (cr);
+  cairo_surface_destroy (surface);
+}
+
+void
+drag_data_get (GtkWidget        *widget,
+               GdkDragContext   *context,
+               GtkSelectionData *selection_data,
+               guint             info,
+               guint             time,
+               gpointer          data)
+{
+  gtk_selection_data_set (selection_data,
+                          gdk_atom_intern_static_string ("GTK_LIST_BOX_ROW"),
+                          32,
+                          (const guchar *)&widget,
+                          sizeof (gpointer));
+}
+
+static void
+drag_data_received (GtkWidget        *widget,
+                    GdkDragContext   *context,
+                    gint              x,
+                    gint              y,
+                    GtkSelectionData *selection_data,
+                    guint             info,
+                    guint32           time,
+                    gpointer          data)
+{
+  GtkWidget *target;
+  GtkWidget *row;
+  GtkWidget *source;
+  int pos;
+
+  target = widget;
+
+  pos = gtk_list_box_row_get_index (GTK_LIST_BOX_ROW (target));
+  row = (GtkWidget*)gtk_selection_data_get_data (selection_data);
+  source = gtk_widget_get_ancestor (row, GTK_TYPE_LIST_BOX_ROW);
+
+  if (source == target)
+    return;
+
+  g_object_ref (source);
+  gtk_container_remove (GTK_CONTAINER (gtk_widget_get_parent (source)), source);
+  gtk_list_box_insert (GTK_LIST_BOX (gtk_widget_get_parent (target)), source, pos);
+  g_object_unref (source);
+}
+
+
+
+static GtkWidget * create_row (const gchar *text)
+{
+  GtkWidget *row, *handle, *box, *label, *image;
+
+  row = gtk_list_box_row_new ();
+
+  box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 10);
+  g_object_set (box, "margin-start", 10, "margin-end", 10, NULL);
+  gtk_container_add (GTK_CONTAINER (row), box);
+
+  handle = gtk_event_box_new ();
+  image = gtk_image_new_from_icon_name ("open-menu-symbolic", (GtkIconSize)1);
+  gtk_container_add (GTK_CONTAINER (handle), image);
+  gtk_container_add (GTK_CONTAINER (box), handle);
+
+  label = gtk_label_new (text);
+  gtk_container_add_with_properties (GTK_CONTAINER (box), label, "expand", TRUE, NULL);
+
+  gtk_drag_source_set (handle, GDK_BUTTON1_MASK, entries, 1, GDK_ACTION_MOVE);
+  g_signal_connect (handle, "drag-begin", G_CALLBACK (drag_begin), NULL);
+  g_signal_connect (handle, "drag-data-get", G_CALLBACK (drag_data_get), NULL);
+
+  gtk_drag_dest_set (row, GTK_DEST_DEFAULT_ALL, entries, 1, GDK_ACTION_MOVE);
+  g_signal_connect (row, "drag-data-received", G_CALLBACK (drag_data_received), NULL);
+
+  return row;
+}
+*/
+
+
+///////////////////////////////////////////////
 
 int main(int argc, char *argv[]) 
 {
@@ -80,6 +197,50 @@ int main(int argc, char *argv[])
 	// Connect signals
 	g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 	gtk_builder_connect_signals(builder, NULL);
+
+
+///////////////////////////////////////////////
+#if 0
+/*
+	GtkWidget *list;
+	GtkWidget *row;
+	gchar *text;
+
+	list = gtk_list_box_new ();
+	gtk_list_box_set_selection_mode (GTK_LIST_BOX (list), GTK_SELECTION_NONE);
+	gtk_container_add (GTK_CONTAINER (window), list);
+
+	for (int i = 0; i < 20; i++)
+	{
+		text = g_strdup_printf ("Row %d", i);
+		row = create_row (text);
+		gtk_list_box_insert (GTK_LIST_BOX (list), row, -1);
+	}
+*/
+//    listbox = gtk_list_new ();
+	GtkListBox* listbox;
+	listbox = GTK_LIST_BOX(gtk_builder_get_object(builder, "bob"));
+
+	listbox
+
+//    gtk_signal_connect (GTK_OBJECT (listbox), "selection_changed",
+//            GTK_SIGNAL_FUNC (listbox_changed), "selection_changed");
+
+    /* --- Set listbox style. --- */
+//    gtk_list_set_selection_mode (GTK_LIST (listbox), GTK_SELECTION_BROWSE);
+
+    /* --- Make it visible --- */
+//    gtk_widget_show (listbox);
+
+    /* --- Add items into the listbox --- */
+    AddListItem (listbox, "This is a listbox");
+    AddListItem (listbox, "Quite useful ... ");
+    AddListItem (listbox, "When it needs to be.");
+    AddListItem (listbox, "This list can be ");
+    AddListItem (listbox, "quite long, you know.");
+#endif
+
+//////////////////////////////////////////////
 
 	gtk_widget_show(window);
 
@@ -110,6 +271,11 @@ int main(int argc, char *argv[])
 	// Load model
 	if (getcwd(szPath, sizeof(szPath)) != NULL)
 	{
+		Vec3D pos;
+		pos.x = 0.0;
+		pos.y = 0.0;
+		pos.z = 0.0;
+
 //		model[0].LoadObjFile(szPath, (char *)"/Models/Monkey.obj", 160);		// Texture, normals
 //		model[0].LoadObjFile(szPath, (char *)"/Models/Teapot_2.obj", 3);		// Normals
 //		model[0].LoadObjFile(szPath, (char *)"/Models/icosahedron.obj", 150);	// Normals
@@ -118,11 +284,9 @@ int main(int argc, char *argv[])
 //		model[0].LoadObjFile(szPath, (char *)"/Models/cube.obj", 100);			// Texture, normals
 //		model[0].LoadObjFile(szPath, (char *)"/Models/axis.obj", 20);			// -
 
+		model[0].position = pos;
+
 		// Create an Icosphere
-		Vec3D pos;
-		pos.x = 0.0;
-		pos.y = 0.0;
-		pos.z = 0.0;
 		model[0] = Icosphere(100, 3, pos);
 
 		pos.x = 200.0;
@@ -137,8 +301,14 @@ int main(int argc, char *argv[])
 		model[2] = Icosphere(75, 2, pos);
 		model[2].SetColour(ColourRef{0, 255, 0});
 
-		numModel = 3;
+		// Create a rectangle
+		pos.x = 0.0;
+		pos.y = 0.0;
+		pos.z = 0.0;
+		model[3] = Rectangle(600, 600, 10, 10, pos);
+		model[3].SetColour(ColourRef{40, 40, 255});
 
+		numModel = 4;
 	}
 	else
 	{
@@ -420,7 +590,16 @@ void DrawView(cairo_t *cr, int style)
 		DEBUG("points ");
 		for (i = 0; i < model[m].numP; i++)
 		{
-			ViewMatrix(&model[m].tmp[i], &view, &(model[m].data[i]));
+			// Move the model to the correct position
+			tmpVec = model[m].data[i] + model[m].position;
+
+			// ---- TEST ----
+			if (0 == m)
+			{
+				tmpVec = tmpVec + target;
+			}
+
+			ViewMatrix(&model[m].tmp[i], &view, &tmpVec);
 		}
 		DEBUG("- [done]\r\n");
 

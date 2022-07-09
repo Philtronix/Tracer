@@ -37,13 +37,13 @@ void DrawFlat(cairo_t *cr)
 	ColourRef	colour;
 	int		m;
 	int		numSurf;
+	double	intensity;
 
 	numSurf = 0;
 	for (int i = 0; i < numModel; i++)
 	{
 		numSurf += model[i].numSurf;
 	}
-
 
     DEBUG("DrawFlat()\r\n");
 	for (i = 0; i < numSurf; i++)
@@ -74,7 +74,7 @@ void DrawFlat(cairo_t *cr)
 		n3 = model[m].tmpNorm[p3];
 
 		// Work out surface colour
-		double intensity = CalcIntensity(v1, v2, v3, n1, n2, n3);
+		intensity = CalcIntensity(v1, v2, v3, n1, n2, n3);
 		colour = model[m].objColour;
 		CalcColour(intensity, &colour);
 
@@ -132,8 +132,7 @@ static double ComputeNDotL(Vec3D vertex, Vec3D normal, Vec3D lightPosition)
     lightDirection.normalise();
 
     double val;
-	Vec3D tmp;
-    val = tmp.dot(normal, lightDirection);
+	val = normal.dot(lightDirection);
 
 	if (val < 0)
 	{

@@ -14,7 +14,7 @@ TODO :
 2. Make icosphere into class based on model - [done]
 3. Add support for mulyiple models - [done]
 4. Optimise, points normals etc.
-5. Move vector maths to Vec3D.cpp
+5. Move vector maths to Vec3D.cpp, dot etc
 6. Add Phong
 7. Z buffer gouraud (leave fill on sort) - [done]
 

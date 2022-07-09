@@ -180,13 +180,9 @@ double Vec3D::operator*(Vec3D m)
 	return result;
 }
 
-double Vec3D::dot(Vec3D a, Vec3D b)
+double Vec3D::dot(Vec3D b)
 {
-	double result;
-
-	result = (a.x * b.x) + (a.y * b.y) + (a.z * b.z);
-
-	return result;
+	return (this->x * b.x) + (this->y * b.y) + (this->z * b.z);
 }
 
 Vec3D Vec3D::cross(Vec3D a, Vec3D b)

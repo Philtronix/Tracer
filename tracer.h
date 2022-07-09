@@ -6,7 +6,7 @@
 #include <gtk/gtk.h>
 #include <gtk/gtkx.h>
 
-#define SWAP(a,b)  { Vec3D *tmp; tmp = a; a = b; b = tmp; }
+//#define SWAP(a,b)  { Vec3D *tmp; tmp = a; a = b; b = tmp; }
 #define SUB_PIX(a) (ceil(a)-a)
 #define PI         3.147
 
@@ -19,13 +19,6 @@
 
 #define VIEWSCRWIDTH	640
 #define VIEWSCRHEIGHT	480
-
-typedef struct
-{
-	Vec3D	vertex;
-	Vec3D	normal;
-	double	intensity;
-} Point;
 
 struct ColourRef
 {

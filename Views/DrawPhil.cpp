@@ -18,6 +18,13 @@ typedef struct SCANLINEDATAtag
     double ndotld;
 } SCANLINEDATA;
 
+typedef struct
+{
+	Vec3D	vertex;
+	Vec3D	normal;
+	double	intensity;
+} Point;
+
 // Local functions
 static void   FillFlatSideTriangle(GdkPixbuf *pixbuf, Point v1, Point v2, Point v3, ColourRef colour);
 static void   SortVerticesAscendingByY(Point *v1, Point *v2, Point *v3);
@@ -89,12 +96,6 @@ void DrawPhil(cairo_t *cr)
 
 		//g_print("lightPos = (%.2f, %.2f, %.2f)\r\n", lightPos.x, lightPos.y, lightPos.z);
 		DrawGouraudTriangle(pixbuf, v1, v2, v3, n1, n2, n3, colour);
-
-		// Now draw black borders
-		//cairo_move_to(cr, (int)v1.x, (int)v1.y);
-		//cairo_line_to(cr, (int)v2.x, (int)v2.y);
-		//cairo_line_to(cr, (int)v3.x, (int)v3.y);
-		//cairo_line_to(cr, (int)v1.x, (int)v1.y);
 	}
 
     DEBUG("DrawGouraud() - [done]\r\n");
@@ -324,8 +325,7 @@ static double ComputeNDotL(Vec3D vertex, Vec3D normal, Vec3D lightPosition)
     lightDirection.normalise();
 
     double val;
-	Vec3D tmp;
-    val = tmp.dot(normal, lightDirection);
+	val = normal.dot(lightDirection);
 
 	if (val < 0)
 	{

@@ -18,7 +18,6 @@ void DrawWire(cairo_t *cr)
 
     for (int m = 0; m < numModel; m++)
     {
-        //g_print("view wire\r\n");
         for (i = 0; i < model[m].numSurf; i++)
         {
             p1 = model[m].surfaces[i].p1 - 1;	// Model point numbers start at 1

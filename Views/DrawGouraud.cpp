@@ -6,11 +6,20 @@
 extern Model      model[];
 extern int        numModel;
 extern int        zoom;
-extern item       sortList[9000];
 extern Vec3D      lightPos;
 extern GdkPixbuf  *pixbuf;
+extern int        ScreenWidth;
+extern int        ScreenHeight;
 
-double zbuffer[VIEWSCRWIDTH][VIEWSCRHEIGHT];
+//double zbuffer[VIEWSCRWIDTH][VIEWSCRHEIGHT];
+double **zbuffer = NULL;
+
+typedef struct
+{
+	Vec3D	vertex;
+	Vec3D	normal;
+	double	intensity;
+} Point;
 
 // Local functions
 static double CalcIntensity(double ya, double yb, double yc, double ia, double ib);
@@ -26,8 +35,8 @@ static double ComputeNDotL(Vec3D vertex, Vec3D normal, Vec3D lightPosition);
 void DrawGouraud(cairo_t *cr)
 {
     int i;
-	int	h = (VIEWSCRHEIGHT / 2);
-	int	w = (VIEWSCRWIDTH / 2);
+	int	h = (ScreenHeight / 2);
+	int	w = (ScreenWidth / 2);
 	int	p1;
 	int	p2;
 	int	p3;
@@ -41,33 +50,49 @@ void DrawGouraud(cairo_t *cr)
     Point p2d2;
     Point p2d3;
 	ColourRef	colour;
-//	int		m;
 
-    DEBUG("DrawGouraud()\r\n");
+	if (zbuffer == NULL)
+	{
+		zbuffer = (double**) malloc(ScreenWidth * sizeof(double));
+		if (zbuffer == NULL)
+		{
+			g_print("out of memory\n");
+			return;
+		}
+
+		for (i = 0; i < ScreenWidth; i++)
+		{
+			zbuffer[i] = (double*) malloc(ScreenHeight * sizeof(double));
+			if (zbuffer[i] == NULL)
+			{
+				g_print("out of memory\n");
+				return;
+			}
+		}
+	}
 
 	// Clear zBuffer
-	for (int y = 0; y < VIEWSCRHEIGHT; y++)
+    DEBUG("Clear Z buffer\r\n");
+	for (int y = 0; y < ScreenHeight; y++)
 	{
-		for (int x = 0; x < VIEWSCRWIDTH; x++)
+		for (int x = 0; x < ScreenWidth; x++)
 		{
 			zbuffer[x][y] = -50000;
 		}
 	}
 
+    DEBUG("Start model loop\r\n");
 	for (int m = 0; m < numModel; m++)
 	{
+		colour = model[m].objColour;
+
+	    DEBUG("Start surface loop\r\n");
 		for (i = 0; i < model[m].numSurf; i++)
 		{
 			// Unsorted
 			p1 = model[m].surfaces[i].p1 - 1;
 			p2 = model[m].surfaces[i].p2 - 1;
 			p3 = model[m].surfaces[i].p3 - 1;
-
-			// Sorted
-//			m = sortList[i].model;
-//			p1 = model[m].surfaces[sortList[i].surface].p1 - 1;
-//			p2 = model[m].surfaces[sortList[i].surface].p2 - 1;
-//			p3 = model[m].surfaces[sortList[i].surface].p3 - 1;
 
 			// Filled triangle
 			v1.x = (model[m].tmp[p1].x * zoom) + w;
@@ -88,6 +113,7 @@ void DrawGouraud(cairo_t *cr)
 			n3 = model[m].tmpNorm[p3];
 
 			// Vertex intensity
+		    DEBUG("Vertex intensity\r\n");
 			p2d1.intensity = ComputeNDotL(model[m].tmp[p1], n1, lightPos);
 			p2d2.intensity = ComputeNDotL(model[m].tmp[p2], n2, lightPos);
 			p2d3.intensity = ComputeNDotL(model[m].tmp[p3], n3, lightPos);
@@ -100,17 +126,7 @@ void DrawGouraud(cairo_t *cr)
 			p2d2.normal = n2;
 			p2d3.normal = n3;
 
-			colour.red   = FLAT_RED;
-			colour.green = FLAT_GREEN;
-			colour.blue  = FLAT_BLUE;
-
 			DrawTriangle(pixbuf, p2d1, p2d2, p2d3, colour);
-
-			// Now draw borders
-			//cairo_move_to(cr, (int)v1.x, (int)v1.y);
-			//cairo_line_to(cr, (int)v2.x, (int)v2.y);
-			//cairo_line_to(cr, (int)v3.x, (int)v3.y);
-			//cairo_line_to(cr, (int)v1.x, (int)v1.y);
 		}
 	}
     DEBUG("DrawGouraud() - [done]\r\n");
@@ -125,8 +141,7 @@ static double ComputeNDotL(Vec3D vertex, Vec3D normal, Vec3D lightPosition)
     normal.normalise();
     lightDirection.normalise();
 
-	Vec3D tmp;
-	double dt = tmp.dot(normal, lightDirection);
+	double dt = normal.dot(lightDirection);
 
 	if (dt > 0)
 	{
@@ -178,13 +193,40 @@ void ProcessScanLine(GdkPixbuf *pixbuf, int y, Point pa, Point pb, Point pc, Poi
 	double dbY = y;
 	double gradient1 = pa.vertex.y != pb.vertex.y ? (dbY - pa.vertex.y) / (pb.vertex.y - pa.vertex.y) : 1;
 	double gradient2 = pc.vertex.y != pd.vertex.y ? (dbY - pc.vertex.y) / (pd.vertex.y - pc.vertex.y) : 1;
-			
+
+    if (y < 0)
+	{
+		return;
+	}
+	
+    if (y > ScreenHeight)
+	{
+		return;
+	}
+
+    DEBUG("7");
 	int sx = (int)Interpolate(pa.vertex.x, pb.vertex.x, gradient1);
 	int ex = (int)Interpolate(pc.vertex.x, pd.vertex.x, gradient2);
+	if (sx < 0)
+	{
+	    DEBUG("!");
+		sx = 0;
+	}
 
+	if (sx >= ScreenWidth)
+	{
+		sx = ScreenWidth - 1;
+	}
+	if (ex >= ScreenWidth)
+	{
+		ex = ScreenWidth - 1;
+	}
+
+    DEBUG("8");
     double snl = Interpolate(pa.intensity, pb.intensity, gradient1);
     double enl = Interpolate(pc.intensity, pd.intensity, gradient2);
 
+    DEBUG("9");
     double z1 = Interpolate(pa.vertex.z, pb.vertex.z, gradient1);
     double z2 = Interpolate(pc.vertex.z, pd.vertex.z, gradient2);
 
@@ -193,16 +235,23 @@ void ProcessScanLine(GdkPixbuf *pixbuf, int y, Point pa, Point pb, Point pc, Poi
 	double z;
 	double ndotl;
 
+    DEBUG("A");
 	// Drawing a line from left (sx) to right (ex) 
 	for (int x = sx; x < ex; x++)
 	{
+	    DEBUG("B");
         gradient = ((double)(x - sx)) / ((double)(ex - sx));
+	    DEBUG("C");
 
         z = Interpolate(z1, z2, gradient);
+	    DEBUG("D");
 		if (z > zbuffer[x][y])
 		{
+		    DEBUG("E");
 			zbuffer[x][y] = z;
+		    DEBUG("F");
 			ndotl = Interpolate(snl, enl, gradient);
+		    DEBUG("G");
 
 			// Changing the color value using the cosine of the angle
 			// between the light vector and the normal vector
@@ -248,9 +297,9 @@ static void CalcColour(double intensity, ColourRef *colour)
 	// ambient
 	intensity += 0.1;
 
-	red   = FLAT_RED   * intensity;
-	green = FLAT_GREEN * intensity;
-	blue  = FLAT_BLUE  * intensity;
+	red   = colour->red   * intensity;
+	green = colour->green * intensity;
+	blue  = colour->blue  * intensity;
 
 	if (red > 255)
 	{
@@ -274,11 +323,12 @@ static void CalcColour(double intensity, ColourRef *colour)
 
 static void DrawTriangle(GdkPixbuf *pixbuf, Point p1, Point p2, Point p3, ColourRef colour)
 {
-	ColourRef	tmp = colour;
+	ColourRef	tmp;
 	double		intensity;
 	double		dP1P2;
 	double		dP1P3;
 
+	DEBUG("DrawTriangle()\r\n");
 	// Sorting the points in order to always have this order on screen p1, p2 & p3
 	// with p1 always up (thus having the Y the lowest possible to be near the top screen)
 	// then p2 between p1 & p3
@@ -336,23 +386,33 @@ static void DrawTriangle(GdkPixbuf *pixbuf, Point p1, Point p2, Point p3, Colour
 	// P3         Highest Y
 	if (dP1P2 > dP1P3)
 	{
+		DEBUG("A : ");
 		for (int y = (int)p1.vertex.y; y <= (int)p3.vertex.y; y++)
 		{
+			tmp = colour;
+
 			if (y < p2.vertex.y)
 			{
 				// 1..3, 1..2
+				DEBUG("1");
 				intensity = CalcIntensity(p1.vertex.y, p3.vertex.y, y, p1.intensity, p3.intensity);
+				DEBUG("2");
 				CalcColour(intensity, &tmp);
+				DEBUG("3");
 				ProcessScanLine(pixbuf, y, p1, p3, p1, p2, tmp);
 			}
 			else
 			{
 				// 1..3, 2..3
+				DEBUG("4");
 				intensity = CalcIntensity(p1.vertex.y, p3.vertex.y, y, p1.intensity, p3.intensity);
+				DEBUG("5");
 				CalcColour(intensity, &tmp);
+				DEBUG("6");
 				ProcessScanLine(pixbuf, y, p1, p3, p2, p3, tmp);
 			}
 		}
+		DEBUG("\r\n");
 	}
 	// First case where triangles are like that:
 	//       P1  Lowest Y
@@ -367,24 +427,36 @@ static void DrawTriangle(GdkPixbuf *pixbuf, Point p1, Point p2, Point p3, Colour
 	//       P3  Highest Y
 	else
 	{
+		DEBUG("B : ");
 		for (int y = (int)p1.vertex.y; y <= (int)p3.vertex.y; y++)
 		{
+			tmp = colour;
+
 			if (y < p2.vertex.y)
 			{
 				// 1..2, 1..3
+				DEBUG("1");
 				intensity = CalcIntensity(p1.vertex.y, p2.vertex.y, y, p1.intensity, p2.intensity);
+				DEBUG("2");
 				CalcColour(intensity, &tmp);
+				DEBUG("3");
 				ProcessScanLine(pixbuf, y, p1, p2, p1, p3, tmp);
 			}
 			else
 			{
 				// 2..3, 1..3
+				DEBUG("4");
 				intensity = CalcIntensity(p2.vertex.y, p3.vertex.y, y, p2.intensity, p3.intensity);
+				DEBUG("5");
 				CalcColour(intensity, &tmp);
+				DEBUG("6");
 				ProcessScanLine(pixbuf, y, p2, p3, p1, p3, tmp);
 			}
 		}
+		DEBUG("\r\n");
 	}
+
+	DEBUG("DrawTriangle() - [done]\r\n");
 }
 
 // EOF

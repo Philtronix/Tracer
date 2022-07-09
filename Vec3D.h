@@ -15,7 +15,7 @@ public:
 	void Translate(double tX, double tY, double tZ);
 	void Scale(double sX, double sY, double sZ);
 
-	static double dot(Vec3D a, Vec3D b);
+	double dot(Vec3D a);
 	Vec3D cross(Vec3D a, Vec3D b);
 	void normalise();
 

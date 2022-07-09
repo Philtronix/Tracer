@@ -159,23 +159,24 @@ Icosphere::Icosphere(int radius, int recursionLevel, Vec3D pos)
     }
 
     // Correct size
-    for (int i = 0; i < (int)data.size(); i++)
-    {
-        data[i].x += pos.x;
-        data[i].y += pos.y;
-        data[i].z += pos.z;
-    }
+//    for (int i = 0; i < (int)data.size(); i++)
+//    {
+//        data[i].x += pos.x;
+//        data[i].y += pos.y;
+//        data[i].z += pos.z;
+//    }
 
     // Other variables    
     numSurf = surfaces.size();
     numP = data.size();
     zoom = 1;
+    position = pos;
 
 	Mesh_normalise();
 
     middlePointIndexCache.clear();
 
-    printf("Vertex   = %d\r\nNormals  = %d\r\nSurfaces = %d\r\n", numP, numNorm, numSurf);
+    printf("Icosphere : Vertex   = %d\r\nNormals  = %d\r\nSurfaces = %d\r\n", numP, numNorm, numSurf);
 }
 
 // EOF

@@ -49,6 +49,7 @@ public:
 	int			numNorm;
 	double		zoom;
     ColourRef	objColour;
+	Vec3D		position;
 
 private:
 	int   ReadLine(char *dst, int *nBytes, FILE *fp);

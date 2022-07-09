@@ -72,10 +72,9 @@ void Matrix4::FPSViewRH(Vec3D eye, double pitch, double yaw)
 
 	// vec4(-dot(xaxis, eye), -dot(yaxis, eye), -dot(zaxis, eye), 1)
 	// TODO : dot correct is correct but eye has no effect
-//	this->r4.x = 100;//-Vec3D::dot(xaxis, eye);
-	this->r4.x = -Vec3D::dot(xaxis, eye);
-	this->r4.y = -Vec3D::dot(yaxis, eye);
-	this->r4.z = -Vec3D::dot(zaxis, eye);
+	this->r4.x = -xaxis.dot(eye);
+	this->r4.y = -xaxis.dot(eye);
+	this->r4.z = -xaxis.dot(eye);
 	this->r4.w = 1.0;
 }
 
