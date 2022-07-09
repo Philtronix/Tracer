@@ -14,6 +14,7 @@
 #include "model.h"
 #include "icosphere.h"
 #include "Rectangle.h"
+#include "cube.h"
 
 #include "Views/DrawPoints.h"
 #include "Views/DrawWire.h"
@@ -285,7 +286,7 @@ int main(int argc, char *argv[])
 //		model[0].LoadObjFile(szPath, (char *)"/Models/axis.obj", 20);			// -
 
 		model[0].position = pos;
-
+/*
 		// Create an Icosphere
 		model[0] = Icosphere(100, 3, pos);
 
@@ -307,8 +308,15 @@ int main(int argc, char *argv[])
 		pos.z = 0.0;
 		model[3] = Rectangle(600, 600, 10, 10, pos);
 		model[3].SetColour(ColourRef{40, 40, 255});
+*/
+		// Create a Cube
+		pos.x = 0.0;
+		pos.y = 0.0;
+		pos.z = 0.0;
+		model[0] = Cube(10, 10, 10, pos);
+		model[0].SetColour(ColourRef{40, 40, 255});
 
-		numModel = 4;
+		numModel = 1;
 	}
 	else
 	{

@@ -16,5 +16,6 @@ g++ -rdynamic -o tracer -Wall -g \
     Views/DrawPhil.cpp \
     icosphere.cpp \
     Rectangle.cpp \
+    cube.cpp \
     $(pkg-config --cflags --libs gtk+-3.0 gmodule-2.0 )
 
