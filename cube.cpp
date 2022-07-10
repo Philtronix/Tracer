@@ -31,15 +31,16 @@ Cube::Cube(int length, int width, int height, Vec3D pos)
     double zf;  // Front
     double zb;  // Back
 
-    yt = height / 2;
-    yb = 0 - yt;
+    yb = height / 2;
+    yt = 0 - yb;
 
-    xr = width / 2;
-    xl = 0 - xr;
+    xl = width / 2;
+    xr = 0 - xl;
 
     zf = length / 2;
     zb = 0 - zf;
     
+    // Points
     AddVertex(xl, yt, zf);  // 1
     AddVertex(xr, yt, zf);  // 2
     AddVertex(xl, yb, zf);  // 3
@@ -49,6 +50,17 @@ Cube::Cube(int length, int width, int height, Vec3D pos)
     AddVertex(xr, yb, zb);  // 7
     AddVertex(xl, yb, zb);  // 8
 
+    // Normals
+    normal[0] = Vec3D( 1.0, -1.0,  1.0);    // Top. left
+    normal[1] = Vec3D(-1.0, -1.0,  1.0);    // Top
+    normal[2] = Vec3D( 1.0,  1.0,  1.0);
+    normal[3] = Vec3D(-1.0,  1.0,  1.0);    // Left
+    normal[4] = Vec3D( 1.0, -1.0, -1.0);    // Top, left
+    normal[5] = Vec3D(-1.0, -1.0, -1.0);    // Top
+    normal[6] = Vec3D(-1.0,  1.0, -1.0);    // Left
+    normal[7] = Vec3D( 1.0,  1.0, -1.0);
+
+    // Surfaces
     surfaces.push_back(SURFACE{ 1, 2, 3 });
     surfaces.push_back(SURFACE{ 2, 3, 4 });
     surfaces.push_back(SURFACE{ 2, 4, 7 });
@@ -66,9 +78,8 @@ Cube::Cube(int length, int width, int height, Vec3D pos)
     numSurf  = 12;
     numP     = 8;
     zoom     = 1;
+    numNorm  = 8;
     position = pos;
-
-	Mesh_normalise();
 
     printf("Rectangle : Vertex   = %d\r\nNormals  = %d\r\nSurfaces = %d\r\n", numP, numNorm, numSurf);
 }

@@ -286,19 +286,19 @@ int main(int argc, char *argv[])
 //		model[0].LoadObjFile(szPath, (char *)"/Models/axis.obj", 20);			// -
 
 		model[0].position = pos;
-/*
+
 		// Create an Icosphere
 		model[0] = Icosphere(100, 3, pos);
 
 		pos.x = 200.0;
-		pos.y = 0.0;
-		pos.z = 0.0;
+		pos.y =   0.0;
+		pos.z =   0.0;
 		model[1] = Icosphere(50, 2, pos);
 		model[1].SetColour(ColourRef{255, 0, 0});
 
-		pos.x = 0.0;
+		pos.x =   0.0;
 		pos.y = 200.0;
-		pos.z = 0.0;
+		pos.z =   0.0;
 		model[2] = Icosphere(75, 2, pos);
 		model[2].SetColour(ColourRef{0, 255, 0});
 
@@ -308,15 +308,15 @@ int main(int argc, char *argv[])
 		pos.z = 0.0;
 		model[3] = Rectangle(600, 600, 10, 10, pos);
 		model[3].SetColour(ColourRef{40, 40, 255});
-*/
-		// Create a Cube
-		pos.x = 0.0;
-		pos.y = 0.0;
-		pos.z = 0.0;
-		model[0] = Cube(10, 10, 10, pos);
-		model[0].SetColour(ColourRef{40, 40, 255});
 
-		numModel = 1;
+		// Create a Cube
+		pos.x = -200.0;
+		pos.y =    0.0;
+		pos.z =    0.0;
+		model[4] = Cube(300, 20, 300, pos);
+		model[4].SetColour(ColourRef{40, 40, 255});
+
+		numModel = 5;
 	}
 	else
 	{
@@ -679,8 +679,9 @@ void DrawView(cairo_t *cr, int style)
 		for (i = 0; i < model[0].numP; i++)
 		{
 			// Only show normal if it is visible
-			if (model[0].showNorm[i].z > 0)
+//			if (model[0].showNorm[i].z > 0)
 			{
+				//g_print("%0.2f %0.2f %0.2f \r\n", model[0].normal[i].x, model[0].normal[i].y, model[0].normal[i].z);
 				x1 = (int)(model[0].tmp[i].x * zoom) + w;
 				y1 = (int)(model[0].tmp[i].y * zoom) + h;
 
@@ -690,6 +691,10 @@ void DrawView(cairo_t *cr, int style)
 				cairo_move_to(cr, x1, y1);
 				cairo_line_to(cr, x2, y2);
 			}
+//			else
+//			{
+//				g_print("%0.2f %0.2f %0.2f \r\n", model[0].normal[i].x, model[0].normal[i].y, model[0].normal[i].z);
+//			}
 		}
 		DEBUG(" - [done]\r\n");
 	}

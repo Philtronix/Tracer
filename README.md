@@ -22,3 +22,4 @@ BUGS :
 1. Low poly icosphere shows odd effects
 2. Monkey.obj in Gouraud shows "RED" errors
 3. Teapot_2.obj in Gouraud, pitch = 0 shows black lines on shading
+4. Cube shows Gouraud error really well
