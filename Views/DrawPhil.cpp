@@ -8,6 +8,8 @@ extern int        zoom;
 extern item       sortList[9000];
 extern Vec3D      lightPos;
 extern GdkPixbuf  *pixbuf;
+extern int        ScreenWidth;
+extern int        ScreenHeight;
 
 typedef struct SCANLINEDATAtag
 {
@@ -41,8 +43,8 @@ int    Sign(int val);
 void DrawPhil(cairo_t *cr)
 {
     int i;
-	int	h = (VIEWSCRHEIGHT / 2);
-	int	w = (VIEWSCRWIDTH / 2);
+	int	h = (ScreenHeight / 2);
+	int	w = (ScreenWidth / 2);
 	int	p1;
 	int	p2;
 	int	p3;

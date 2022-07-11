@@ -17,5 +17,6 @@ g++ -rdynamic -o tracer -Wall -g \
     icosphere.cpp \
     Rectangle.cpp \
     cube.cpp \
+    Torus.cpp \
     $(pkg-config --cflags --libs gtk+-3.0 gmodule-2.0 )
 

@@ -11,7 +11,6 @@ extern GdkPixbuf  *pixbuf;
 extern int        ScreenWidth;
 extern int        ScreenHeight;
 
-//double zbuffer[VIEWSCRWIDTH][VIEWSCRHEIGHT];
 double **zbuffer = NULL;
 
 typedef struct

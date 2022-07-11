@@ -6,14 +6,16 @@
 extern Model model[];
 extern int   numModel;
 extern int   zoom;
+extern int        ScreenWidth;
+extern int        ScreenHeight;
 
 void DrawPoints(cairo_t *cr)
 {
     int i;
 	int	x1;
 	int	y1;
-	int	h = (VIEWSCRHEIGHT / 2);
-	int	w = (VIEWSCRWIDTH / 2);
+	int	h = (ScreenHeight / 2);
+	int	w = (ScreenWidth / 2);
 
     //g_print("view points\r\n");
     for (int m = 0; m < numModel; m++)

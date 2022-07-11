@@ -15,6 +15,7 @@
 #include "icosphere.h"
 #include "Rectangle.h"
 #include "cube.h"
+#include "Torus.h"
 
 #include "Views/DrawPoints.h"
 #include "Views/DrawWire.h"
@@ -286,7 +287,7 @@ int main(int argc, char *argv[])
 //		model[0].LoadObjFile(szPath, (char *)"/Models/axis.obj", 20);			// -
 
 		model[0].position = pos;
-
+/*
 		// Create an Icosphere
 		model[0] = Icosphere(100, 3, pos);
 
@@ -317,6 +318,16 @@ int main(int argc, char *argv[])
 		model[4].SetColour(ColourRef{40, 40, 255});
 
 		numModel = 5;
+*/
+		// Create a Torus
+		pos.x = 0.0;
+		pos.y = 0.0;
+		pos.z = 0.0;
+		model[0] = Torus(20, 50, 150.0, 50.0, pos);
+		model[0].SetColour(ColourRef{40, 40, 255});
+
+		numModel = 1;
+
 	}
 	else
 	{
@@ -561,8 +572,8 @@ void ViewMatrix(Vec3D *result, Matrix4 *matrix, Vec3D *data)
 void DrawView(cairo_t *cr, int style)
 {
 	int		i;
-	int		h = (VIEWSCRHEIGHT / 2);
-	int		w = (VIEWSCRWIDTH / 2);
+	int		h = (ScreenHeight / 2);
+	int		w = (ScreenWidth / 2);
 	Matrix4 view;
 	Vec3D	v1;
 	Vec3D	v2;
@@ -651,7 +662,6 @@ void DrawView(cairo_t *cr, int style)
 		break;
 
 	case VIEW_GOURAUD:
-//		SortSurfaces();
 		DrawGouraud(cr);
 		break;
 
@@ -676,25 +686,29 @@ void DrawView(cairo_t *cr, int style)
 		cairo_stroke(cr);
 		cairo_set_source_rgb(cr, 1.0, 0.0, 0.0);
 
-		for (i = 0; i < model[0].numP; i++)
+		for (int m = 0; m < numModel; m++)
 		{
-			// Only show normal if it is visible
-//			if (model[0].showNorm[i].z > 0)
+			for (i = 0; i < model[m].numP; i++)
 			{
-				//g_print("%0.2f %0.2f %0.2f \r\n", model[0].normal[i].x, model[0].normal[i].y, model[0].normal[i].z);
-				x1 = (int)(model[0].tmp[i].x * zoom) + w;
-				y1 = (int)(model[0].tmp[i].y * zoom) + h;
+				// Only show normal if it is visible
+//				if (model[0].showNorm[i].z > 0)
+//				if (model[0].showNorm[i].z < model[0].tmp[i].z)
+				{
+					//g_print("%0.2f %0.2f %0.2f \r\n", model[0].normal[i].x, model[0].normal[i].y, model[0].normal[i].z);
+					x1 = (int)(model[m].tmp[i].x * zoom) + w;
+					y1 = (int)(model[m].tmp[i].y * zoom) + h;
 
-				x2 = (int)(model[0].showNorm[i].x * zoom) + w;
-				y2 = (int)(model[0].showNorm[i].y * zoom) + h;
+					x2 = (int)(model[m].showNorm[i].x * zoom) + w;
+					y2 = (int)(model[m].showNorm[i].y * zoom) + h;
 
-				cairo_move_to(cr, x1, y1);
-				cairo_line_to(cr, x2, y2);
+					cairo_move_to(cr, x1, y1);
+					cairo_line_to(cr, x2, y2);
+				}
+//				else
+//				{
+//					g_print("%0.2f %0.2f %0.2f \r\n", model[0].normal[i].x, model[0].normal[i].y, model[0].normal[i].z);
+//				}
 			}
-//			else
-//			{
-//				g_print("%0.2f %0.2f %0.2f \r\n", model[0].normal[i].x, model[0].normal[i].y, model[0].normal[i].z);
-//			}
 		}
 		DEBUG(" - [done]\r\n");
 	}
