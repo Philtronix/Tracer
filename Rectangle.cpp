@@ -94,7 +94,7 @@ Rectangle::Rectangle(int width, int height, int numRows, int numColumns, Vec3D p
 
 	Mesh_normalise();
 
-    printf("Rectangle : Vertex   = %d\r\nNormals  = %d\r\nSurfaces = %d\r\n", numP, numNorm, numSurf);
+    printf("Rectangle :\r\nVertex   = %d\r\nNormals  = %d\r\nSurfaces = %d\r\n", numP, numNorm, numSurf);
 }
 
 // EOF

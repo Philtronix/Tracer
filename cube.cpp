@@ -81,7 +81,7 @@ Cube::Cube(int length, int width, int height, Vec3D pos)
     numNorm  = 8;
     position = pos;
 
-    printf("Rectangle : Vertex   = %d\r\nNormals  = %d\r\nSurfaces = %d\r\n", numP, numNorm, numSurf);
+    printf("Cube :\r\nVertex   = %d\r\nNormals  = %d\r\nSurfaces = %d\r\n", numP, numNorm, numSurf);
 }
 
 // EOF

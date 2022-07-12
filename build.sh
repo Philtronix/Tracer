@@ -19,5 +19,6 @@ g++ -rdynamic -o tracer -Wall -g \
     cube.cpp \
     Torus.cpp \
     Cylinder.cpp \
+    Cone.cpp \
     $(pkg-config --cflags --libs gtk+-3.0 gmodule-2.0 )
 

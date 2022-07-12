@@ -1,5 +1,5 @@
 # Tracer
-Raytracer proof of concept
+Raytracer proof of concept. No actual ray tracing yet, just displays obj models and primitives.
 
 Messy code, it works but needs cleaning and optimising.
 
@@ -8,6 +8,7 @@ http://blog.andreaskahler.com/2009/06/creating-icosphere-mesh-in-code.html
 https://iquilezles.org/articles/normals/
 http://www.sunshine2k.de/coding/java/TriangleRasterization/TriangleRasterization.html
 http://en.wikipedia.org/wiki/Slope
+https://www.danielsieger.com/blog/2021/05/03/generating-primitive-shapes.html
 
 TODO :
 1. Delete Gouraud and rename DrawPhil.cpp .h - [done]
