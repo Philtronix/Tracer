@@ -29,7 +29,7 @@ Torus::~Torus()
 Torus::Torus(int radial_resolution, int tubular_resolution, double radius, double thickness, Vec3D pos)
 {
     // --- Generate vertices ---
-    int s = 0;
+
     // Points per segment
     for (int i = 0; i < radial_resolution; i++) 
     {
@@ -81,7 +81,7 @@ Torus::Torus(int radial_resolution, int tubular_resolution, double radius, doubl
 
 	Mesh_normalise();
 
-    printf("Torus : Vertex   = %d\r\nNormals  = %d\r\nSurfaces = %d\r\n", numP, numNorm, numSurf);
+    printf("Torus :\r\nVertex   = %d\r\nNormals  = %d\r\nSurfaces = %d\r\n", numP, numNorm, numSurf);
 }
 
 // EOF

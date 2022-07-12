@@ -16,6 +16,7 @@
 #include "Rectangle.h"
 #include "cube.h"
 #include "Torus.h"
+#include "Cylinder.h"
 
 #include "Views/DrawPoints.h"
 #include "Views/DrawWire.h"
@@ -318,12 +319,19 @@ int main(int argc, char *argv[])
 		model[4].SetColour(ColourRef{40, 40, 255});
 
 		numModel = 5;
-*/
+
 		// Create a Torus
 		pos.x = 0.0;
 		pos.y = 0.0;
 		pos.z = 0.0;
 		model[0] = Torus(20, 50, 150.0, 50.0, pos);
+		model[0].SetColour(ColourRef{40, 40, 255});
+*/
+		// Create a Cylinder
+		pos.x = 0.0;
+		pos.y = 0.0;
+		pos.z = 0.0;
+		model[0] = Cylinder(50, 100, 20, pos);
 		model[0].SetColour(ColourRef{40, 40, 255});
 
 		numModel = 1;
