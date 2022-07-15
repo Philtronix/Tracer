@@ -30,9 +30,9 @@
 //#define DEBUG(x) g_print(x)
 #define DEBUG(x)
 
-static void DrawView(cairo_t *cr, int style);
-
-Vec3D  CrossProduct(Vec3D a, Vec3D b);
+static void   DrawView(cairo_t *cr, int style);
+static Vec3D  CrossProduct(Vec3D a, Vec3D b);
+static void   AddRow(const char *text);
 
 // GTK Objects
 GtkBuilder *builder; 
@@ -62,117 +62,17 @@ item   sortList[9000];
 Vec3D  lightPos(10.0, 10.0, 10.0);
 
 ///////////////////////////////////////////////
-/*
-static GtkTargetEntry entries[] = {
-  { "GTK_LIST_BOX_ROW", GTK_TARGET_SAME_APP, 0 }
-};
+GtkTreeStore *treeStore;
+GtkTreeView  *tv1;
+GtkTreeViewColumn *cx1;
+GtkTreeViewColumn *cx2;
+GtkTreeSelection  *selection;
+GtkCellRenderer   *cr1;
+GtkCellRenderer   *cr2;
 
-
-static void
-drag_begin (GtkWidget      *widget,
-            GdkDragContext *context,
-            gpointer        data)
-{
-  GtkWidget *row;
-  GtkAllocation alloc;
-  cairo_surface_t *surface;
-  cairo_t *cr;
-  int x, y;
-  double sx, sy;
-
-  row = gtk_widget_get_ancestor (widget, GTK_TYPE_LIST_BOX_ROW);
-  gtk_widget_get_allocation (row, &alloc);
-  surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, alloc.width, alloc.height);
-  cr = cairo_create (surface);
-
-  gtk_style_context_add_class (gtk_widget_get_style_context (row), "drag-icon");
-  gtk_widget_draw (row, cr);
-  gtk_style_context_remove_class (gtk_widget_get_style_context (row), "drag-icon");
-
-  gtk_widget_translate_coordinates (widget, row, 0, 0, &x, &y);
-  cairo_surface_get_device_scale (surface, &sx, &sy);
-  cairo_surface_set_device_offset (surface, -x * sx, -y * sy);
-  gtk_drag_set_icon_surface (context, surface);
-
-  cairo_destroy (cr);
-  cairo_surface_destroy (surface);
-}
-
-void
-drag_data_get (GtkWidget        *widget,
-               GdkDragContext   *context,
-               GtkSelectionData *selection_data,
-               guint             info,
-               guint             time,
-               gpointer          data)
-{
-  gtk_selection_data_set (selection_data,
-                          gdk_atom_intern_static_string ("GTK_LIST_BOX_ROW"),
-                          32,
-                          (const guchar *)&widget,
-                          sizeof (gpointer));
-}
-
-static void
-drag_data_received (GtkWidget        *widget,
-                    GdkDragContext   *context,
-                    gint              x,
-                    gint              y,
-                    GtkSelectionData *selection_data,
-                    guint             info,
-                    guint32           time,
-                    gpointer          data)
-{
-  GtkWidget *target;
-  GtkWidget *row;
-  GtkWidget *source;
-  int pos;
-
-  target = widget;
-
-  pos = gtk_list_box_row_get_index (GTK_LIST_BOX_ROW (target));
-  row = (GtkWidget*)gtk_selection_data_get_data (selection_data);
-  source = gtk_widget_get_ancestor (row, GTK_TYPE_LIST_BOX_ROW);
-
-  if (source == target)
-    return;
-
-  g_object_ref (source);
-  gtk_container_remove (GTK_CONTAINER (gtk_widget_get_parent (source)), source);
-  gtk_list_box_insert (GTK_LIST_BOX (gtk_widget_get_parent (target)), source, pos);
-  g_object_unref (source);
-}
-
-
-
-static GtkWidget * create_row (const gchar *text)
-{
-  GtkWidget *row, *handle, *box, *label, *image;
-
-  row = gtk_list_box_row_new ();
-
-  box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 10);
-  g_object_set (box, "margin-start", 10, "margin-end", 10, NULL);
-  gtk_container_add (GTK_CONTAINER (row), box);
-
-  handle = gtk_event_box_new ();
-  image = gtk_image_new_from_icon_name ("open-menu-symbolic", (GtkIconSize)1);
-  gtk_container_add (GTK_CONTAINER (handle), image);
-  gtk_container_add (GTK_CONTAINER (box), handle);
-
-  label = gtk_label_new (text);
-  gtk_container_add_with_properties (GTK_CONTAINER (box), label, "expand", TRUE, NULL);
-
-  gtk_drag_source_set (handle, GDK_BUTTON1_MASK, entries, 1, GDK_ACTION_MOVE);
-  g_signal_connect (handle, "drag-begin", G_CALLBACK (drag_begin), NULL);
-  g_signal_connect (handle, "drag-data-get", G_CALLBACK (drag_data_get), NULL);
-
-  gtk_drag_dest_set (row, GTK_DEST_DEFAULT_ALL, entries, 1, GDK_ACTION_MOVE);
-  g_signal_connect (row, "drag-data-received", G_CALLBACK (drag_data_received), NULL);
-
-  return row;
-}
-*/
+GtkTreeIter iter;		// iterators
+GtkTreeIter iterChild1;	// iterators
+GtkTreeIter iterChild2;	// iterators
 
 
 ///////////////////////////////////////////////
@@ -202,50 +102,21 @@ int main(int argc, char *argv[])
 	g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 	gtk_builder_connect_signals(builder, NULL);
 
+	// Treeview
+	treeStore = GTK_TREE_STORE(gtk_builder_get_object(builder, "treeStore"));
+	tv1	      = GTK_TREE_VIEW(gtk_builder_get_object(builder, "tv1"));
+	cx1       = GTK_TREE_VIEW_COLUMN(gtk_builder_get_object(builder, "cx1"));		// Column 1
+	cx2       = GTK_TREE_VIEW_COLUMN(gtk_builder_get_object(builder, "cx2"));		// Column 2
+	cr1       = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "cr1"));			// Column 1 renderer
+	cr2       = GTK_CELL_RENDERER(gtk_builder_get_object(builder, "cr2"));			// Column 2 renderer
+	selection = GTK_TREE_SELECTION(gtk_builder_get_object(builder, "selection"));	// tree view selection
 
-///////////////////////////////////////////////
-#if 0
-/*
-	GtkWidget *list;
-	GtkWidget *row;
-	gchar *text;
+	gtk_tree_view_column_add_attribute(cx1, cr1, "text", 0);	// Attach renderer to column
+	gtk_tree_view_column_add_attribute(cx2, cr2, "active", 1);	// Attach renderer to column & make box alterable
 
-	list = gtk_list_box_new ();
-	gtk_list_box_set_selection_mode (GTK_LIST_BOX (list), GTK_SELECTION_NONE);
-	gtk_container_add (GTK_CONTAINER (window), list);
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tv1));
 
-	for (int i = 0; i < 20; i++)
-	{
-		text = g_strdup_printf ("Row %d", i);
-		row = create_row (text);
-		gtk_list_box_insert (GTK_LIST_BOX (list), row, -1);
-	}
-*/
-//    listbox = gtk_list_new ();
-	GtkListBox* listbox;
-	listbox = GTK_LIST_BOX(gtk_builder_get_object(builder, "bob"));
-
-	listbox
-
-//    gtk_signal_connect (GTK_OBJECT (listbox), "selection_changed",
-//            GTK_SIGNAL_FUNC (listbox_changed), "selection_changed");
-
-    /* --- Set listbox style. --- */
-//    gtk_list_set_selection_mode (GTK_LIST (listbox), GTK_SELECTION_BROWSE);
-
-    /* --- Make it visible --- */
-//    gtk_widget_show (listbox);
-
-    /* --- Add items into the listbox --- */
-    AddListItem (listbox, "This is a listbox");
-    AddListItem (listbox, "Quite useful ... ");
-    AddListItem (listbox, "When it needs to be.");
-    AddListItem (listbox, "This list can be ");
-    AddListItem (listbox, "quite long, you know.");
-#endif
-
-//////////////////////////////////////////////
-
+	// Activate main window	
 	gtk_widget_show(window);
 
 	// Get window size
@@ -288,22 +159,24 @@ int main(int argc, char *argv[])
 //		model[0].LoadObjFile(szPath, (char *)"/Models/cube.obj", 100);			// Texture, normals
 //		model[0].LoadObjFile(szPath, (char *)"/Models/axis.obj", 20);			// -
 
-		model[0].position = pos;
-/*
 		// Create an Icosphere
+		model[0].position = pos;
 		model[0] = Icosphere(100, 3, pos);
+		AddRow("Blue Sphere");
 
 		pos.x = 200.0;
 		pos.y =   0.0;
-		pos.z =   0.0;
+		pos.z =  50.0;
 		model[1] = Icosphere(50, 2, pos);
 		model[1].SetColour(ColourRef{255, 0, 0});
+		AddRow("Red Sphere");
 
 		pos.x =   0.0;
 		pos.y = 200.0;
 		pos.z =   0.0;
 		model[2] = Icosphere(75, 2, pos);
 		model[2].SetColour(ColourRef{0, 255, 0});
+		AddRow("Green Sphere");
 
 		// Create a rectangle
 		pos.x = 0.0;
@@ -311,6 +184,7 @@ int main(int argc, char *argv[])
 		pos.z = 0.0;
 		model[3] = Rectangle(600, 600, 10, 10, pos);
 		model[3].SetColour(ColourRef{40, 40, 255});
+		AddRow("Rectangle");
 
 		// Create a Cube
 		pos.x = -200.0;
@@ -318,33 +192,33 @@ int main(int argc, char *argv[])
 		pos.z =    0.0;
 		model[4] = Cube(300, 20, 300, pos);
 		model[4].SetColour(ColourRef{40, 40, 255});
-
-		numModel = 5;
+		AddRow("Cube");
 
 		// Create a Torus
-		pos.x = 0.0;
-		pos.y = 0.0;
-		pos.z = 0.0;
-		model[0] = Torus(20, 50, 150.0, 50.0, pos);
-		model[0].SetColour(ColourRef{40, 40, 255});
+		pos.x =    0.0;
+		pos.y = -200.0;
+		pos.z =   50.0;
+		model[5] = Torus(10, 20, 50.0, 20.0, pos);
+		model[5].SetColour(ColourRef{240, 40, 240});
+		AddRow("Torus");
 
 		// Create a Cylinder
-		pos.x = 0.0;
-		pos.y = 0.0;
-		pos.z = 0.0;
-		model[0] = Cylinder(50, 100, 20, pos);
-		model[0].SetColour(ColourRef{40, 40, 255});
-*/
+		pos.x =  200.0;
+		pos.y = -200.0;
+		pos.z =    0.0;
+		model[6] = Cylinder(100, 50, 20, pos);
+		model[6].SetColour(ColourRef{40, 240, 240});
+		AddRow("Cylinder");
 
-		// Create a Cylinder
-		pos.x = 0.0;
-		pos.y = 0.0;
-		pos.z = 0.0;
-		model[0] = Cone(100, 50, 10, pos);
-		model[0].SetColour(ColourRef{40, 40, 255});
+		// Create a Cone
+		pos.x = 200.0;
+		pos.y = 200.0;
+		pos.z =   0.0;
+		model[7] = Cone(100, 50, 10, pos);
+		model[7].SetColour(ColourRef{40, 40, 255});
+		AddRow("Cone");
 
-		numModel = 1;
-
+		numModel = 8;
 	}
 	else
 	{
@@ -355,6 +229,13 @@ int main(int argc, char *argv[])
 	gtk_main();
 
 	return EXIT_SUCCESS;
+}
+
+static void AddRow(const char *text)
+{
+	gtk_tree_store_append (treeStore, &iter, NULL);
+	gtk_tree_store_set(treeStore, &iter, 0, text, -1);
+	gtk_tree_store_set(treeStore, &iter, 1, TRUE, -1);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -506,6 +387,63 @@ extern "C" G_MODULE_EXPORT void on_raytrace_toggled(GtkToggleButton* button, gpo
 		view = VIEW_RAYTRACE;
 		gtk_widget_queue_draw(screen);
 	}
+}
+
+extern "C" G_MODULE_EXPORT void on_select_changed(GtkTreeSelection *c) 
+{ 
+	gchar        *value;
+	gboolean     box;
+	GtkTreeIter  iter;
+	GtkTreeModel *model;
+
+//	Function 'get_tree_selection_get_selected' sets the model 
+//	and iter from the selection c
+
+	if (gtk_tree_selection_get_selected(GTK_TREE_SELECTION(c), &model, &iter) == FALSE)
+	{
+		return;
+	}
+ 
+	gtk_tree_model_get(model, &iter, 0, &value,  -1); // get column 0
+	printf("Select signal received: col 0 = \"%s\"; ", value);
+
+	gtk_tree_model_get(model, &iter, 1, &box,  -1); // get column 1
+	printf("col 1  = \"%d\"\n", box);
+}
+
+extern "C" G_MODULE_EXPORT void	on_cr2_toggled (GtkCellRendererToggle *cell, gchar *path_string)
+{ 
+	GtkTreeIter		iter;
+	GtkTreeModel	*treeModel;
+	gboolean		t = FALSE;
+	gchar			*text;
+	int				m;
+
+	printf("---------------------------------------\n");
+	printf("box toggle signal received: path = \"%s\"\n", path_string);	// path gives row and child data
+	treeModel = gtk_tree_view_get_model(tv1);							// get the tree model
+	gtk_tree_model_get_iter_from_string(treeModel, &iter, path_string);	// get iter from path
+	gtk_tree_model_get(treeModel, &iter, 0, &text, -1);					// get the text pointer of col 0
+	printf ("For row text  = \"%s\"\n", text);
+	gtk_tree_model_get(treeModel, &iter, 1, &t, -1);					// get the boolean value of col 1
+
+	m = atoi(path_string);
+	if (t == FALSE)
+	{
+		t = TRUE;
+		model[m].show = true;
+	}
+	else 
+	{
+		t = FALSE; // toggle
+		model[m].show = false;
+	}
+
+	gtk_widget_queue_draw(screen);
+	
+	gtk_tree_store_set(treeStore, &iter, 1, t, -1); // alter col 1 check box
+	printf("---------------------------------------\n");
+	return;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -735,7 +673,7 @@ void DrawView(cairo_t *cr, int style)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-Vec3D CrossProduct(Vec3D a, Vec3D b)
+static Vec3D CrossProduct(Vec3D a, Vec3D b)
 {
 	Vec3D OutVector = { 0, 0, 0 };
 
@@ -783,17 +721,20 @@ void SortSurfaces()
 	int s = 0;
 	for (int m = 0; m < numModel; m++)
 	{
-		// Calculate average Z values
-		for (int i = 0; i < model[m].numSurf; i++)
+		if (true == model[m].show)
 		{
-			p1 = model[m].surfaces[i].p1 - 1;	// Model point numbers start at 1
-			p2 = model[m].surfaces[i].p2 - 1;
-			p3 = model[m].surfaces[i].p3 - 1;
+			// Calculate average Z values
+			for (int i = 0; i < model[m].numSurf; i++)
+			{
+				p1 = model[m].surfaces[i].p1 - 1;	// Model point numbers start at 1
+				p2 = model[m].surfaces[i].p2 - 1;
+				p3 = model[m].surfaces[i].p3 - 1;
 
-			sortList[s].avz = (model[m].tmp[p1].z + model[m].tmp[p2].z + model[m].tmp[p3].z) / 3;
-			sortList[s].surface = i;
-			sortList[s].model = m;
-			s++;
+				sortList[s].avz = (model[m].tmp[p1].z + model[m].tmp[p2].z + model[m].tmp[p3].z) / 3;
+				sortList[s].surface = i;
+				sortList[s].model = m;
+				s++;
+			}
 		}
 	}
 

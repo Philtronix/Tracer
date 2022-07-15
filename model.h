@@ -50,6 +50,7 @@ public:
 	double		zoom;
     ColourRef	objColour;
 	Vec3D		position;
+	bool		show;
 
 private:
 	int   ReadLine(char *dst, int *nBytes, FILE *fp);

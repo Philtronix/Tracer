@@ -50,6 +50,7 @@ void DrawGouraud(cairo_t *cr)
     Point p2d3;
 	ColourRef	colour;
 
+	// Allocate memory
 	if (zbuffer == NULL)
 	{
 		zbuffer = (double**) malloc(ScreenWidth * sizeof(double));
@@ -83,49 +84,52 @@ void DrawGouraud(cairo_t *cr)
     DEBUG("Start model loop\r\n");
 	for (int m = 0; m < numModel; m++)
 	{
-		colour = model[m].objColour;
-
-	    DEBUG("Start surface loop\r\n");
-		for (i = 0; i < model[m].numSurf; i++)
+		if (true == model[m].show)
 		{
-			// Unsorted
-			p1 = model[m].surfaces[i].p1 - 1;
-			p2 = model[m].surfaces[i].p2 - 1;
-			p3 = model[m].surfaces[i].p3 - 1;
+			colour = model[m].objColour;
 
-			// Filled triangle
-			v1.x = (model[m].tmp[p1].x * zoom) + w;
-			v1.y = (model[m].tmp[p1].y * zoom) + h;
-			v1.z = (model[m].tmp[p1].z * zoom);
+			DEBUG("Start surface loop\r\n");
+			for (i = 0; i < model[m].numSurf; i++)
+			{
+				// Unsorted
+				p1 = model[m].surfaces[i].p1 - 1;
+				p2 = model[m].surfaces[i].p2 - 1;
+				p3 = model[m].surfaces[i].p3 - 1;
 
-			v2.x = (model[m].tmp[p2].x * zoom) + w;
-			v2.y = (model[m].tmp[p2].y * zoom) + h;
-			v2.z = (model[m].tmp[p2].z * zoom);
+				// Filled triangle
+				v1.x = (model[m].tmp[p1].x * zoom) + w;
+				v1.y = (model[m].tmp[p1].y * zoom) + h;
+				v1.z = (model[m].tmp[p1].z * zoom);
 
-			v3.x = (model[m].tmp[p3].x * zoom) + w;
-			v3.y = (model[m].tmp[p3].y * zoom) + h;
-			v3.z = (model[m].tmp[p3].z * zoom);
+				v2.x = (model[m].tmp[p2].x * zoom) + w;
+				v2.y = (model[m].tmp[p2].y * zoom) + h;
+				v2.z = (model[m].tmp[p2].z * zoom);
 
-			// Normals
-			n1 = model[m].tmpNorm[p1];
-			n2 = model[m].tmpNorm[p2];
-			n3 = model[m].tmpNorm[p3];
+				v3.x = (model[m].tmp[p3].x * zoom) + w;
+				v3.y = (model[m].tmp[p3].y * zoom) + h;
+				v3.z = (model[m].tmp[p3].z * zoom);
 
-			// Vertex intensity
-		    DEBUG("Vertex intensity\r\n");
-			p2d1.intensity = ComputeNDotL(model[m].tmp[p1], n1, lightPos);
-			p2d2.intensity = ComputeNDotL(model[m].tmp[p2], n2, lightPos);
-			p2d3.intensity = ComputeNDotL(model[m].tmp[p3], n3, lightPos);
+				// Normals
+				n1 = model[m].tmpNorm[p1];
+				n2 = model[m].tmpNorm[p2];
+				n3 = model[m].tmpNorm[p3];
 
-			p2d1.vertex = v1;
-			p2d2.vertex = v2;
-			p2d3.vertex = v3;
+				// Vertex intensity
+				DEBUG("Vertex intensity\r\n");
+				p2d1.intensity = ComputeNDotL(model[m].tmp[p1], n1, lightPos);
+				p2d2.intensity = ComputeNDotL(model[m].tmp[p2], n2, lightPos);
+				p2d3.intensity = ComputeNDotL(model[m].tmp[p3], n3, lightPos);
 
-			p2d1.normal = n1;
-			p2d2.normal = n2;
-			p2d3.normal = n3;
+				p2d1.vertex = v1;
+				p2d2.vertex = v2;
+				p2d3.vertex = v3;
 
-			DrawTriangle(pixbuf, p2d1, p2d2, p2d3, colour);
+				p2d1.normal = n1;
+				p2d2.normal = n2;
+				p2d3.normal = n3;
+
+				DrawTriangle(pixbuf, p2d1, p2d2, p2d3, colour);
+			}
 		}
 	}
     DEBUG("DrawGouraud() - [done]\r\n");

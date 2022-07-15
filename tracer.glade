@@ -74,6 +74,14 @@
     <property name="page_increment">10</property>
     <signal name="value-changed" handler="on_targetZ_value_changed" swapped="no"/>
   </object>
+  <object class="GtkTreeStore" id="treeStore">
+    <columns>
+      <!-- column-name c1 -->
+      <column type="gchararray"/>
+      <!-- column-name c2 -->
+      <column type="gboolean"/>
+    </columns>
+  </object>
   <object class="GtkAdjustment" id="yaw">
     <property name="upper">360</property>
     <property name="step_increment">1</property>
@@ -262,44 +270,37 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkListBox" id="philslistbox">
+              <object class="GtkScrolledWindow">
+                <property name="width_request">200</property>
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can_focus">True</property>
+                <property name="shadow_type">in</property>
                 <child>
-                  <object class="GtkListBoxRow" id="mylistboxrow">
-                    <property name="width_request">100</property>
-                    <property name="height_request">80</property>
+                  <object class="GtkTreeView" id="tv1">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="model">treeStore</property>
+                    <property name="enable_grid_lines">both</property>
+                    <child internal-child="selection">
+                      <object class="GtkTreeSelection" id="selection">
+                        <signal name="changed" handler="on_select_changed" swapped="no"/>
+                      </object>
+                    </child>
                     <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
+                      <object class="GtkTreeViewColumn" id="cx1">
+                        <property name="title" translatable="yes">Model Name</property>
                         <child>
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">label</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
+                          <object class="GtkCellRendererText" id="cr1"/>
                         </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkTreeViewColumn" id="cx2">
+                        <property name="title" translatable="yes">Show</property>
                         <child>
-                          <object class="GtkCheckButton">
-                            <property name="label" translatable="yes">hello</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="draw_indicator">True</property>
+                          <object class="GtkCellRendererToggle" id="cr2">
+                            <signal name="toggled" handler="on_cr2_toggled" swapped="no"/>
                           </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
                         </child>
                       </object>
                     </child>

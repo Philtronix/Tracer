@@ -8,6 +8,7 @@ Model::Model()
 	numSurf = 0;
 	numNorm = 0;
 	zoom = 1.0;
+	show = true;
 	objColour.red   = FLAT_RED;
 	objColour.green = FLAT_GREEN;
 	objColour.blue  = FLAT_BLUE;

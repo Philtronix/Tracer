@@ -44,7 +44,10 @@ void DrawFlat(cairo_t *cr)
 	numSurf = 0;
 	for (int i = 0; i < numModel; i++)
 	{
-		numSurf += model[i].numSurf;
+		if (true == model[i].show)
+		{
+			numSurf += model[i].numSurf;
+		}
 	}
 
     DEBUG("DrawFlat()\r\n");
@@ -52,41 +55,44 @@ void DrawFlat(cairo_t *cr)
 	{
 		m = sortList[i].model;
 
-		// Sorted
-		p1 = model[m].surfaces[sortList[i].surface].p1 - 1;
-		p2 = model[m].surfaces[sortList[i].surface].p2 - 1;
-		p3 = model[m].surfaces[sortList[i].surface].p3 - 1;
+		if (true == model[m].show)
+		{
+			// Sorted
+			p1 = model[m].surfaces[sortList[i].surface].p1 - 1;
+			p2 = model[m].surfaces[sortList[i].surface].p2 - 1;
+			p3 = model[m].surfaces[sortList[i].surface].p3 - 1;
 
-		// Filled triangle
-		v1.x = (model[m].tmp[p1].x * zoom) + w;
-		v1.y = (model[m].tmp[p1].y * zoom) + h;
-		v1.z = (model[m].tmp[p1].z * zoom);
+			// Filled triangle
+			v1.x = (model[m].tmp[p1].x * zoom) + w;
+			v1.y = (model[m].tmp[p1].y * zoom) + h;
+			v1.z = (model[m].tmp[p1].z * zoom);
 
-		v2.x = (model[m].tmp[p2].x * zoom) + w;
-		v2.y = (model[m].tmp[p2].y * zoom) + h;
-		v2.z = (model[m].tmp[p2].z * zoom);
+			v2.x = (model[m].tmp[p2].x * zoom) + w;
+			v2.y = (model[m].tmp[p2].y * zoom) + h;
+			v2.z = (model[m].tmp[p2].z * zoom);
 
-		v3.x = (model[m].tmp[p3].x * zoom) + w;
-		v3.y = (model[m].tmp[p3].y * zoom) + h;
-		v3.z = (model[m].tmp[p3].z * zoom);
+			v3.x = (model[m].tmp[p3].x * zoom) + w;
+			v3.y = (model[m].tmp[p3].y * zoom) + h;
+			v3.z = (model[m].tmp[p3].z * zoom);
 
-		// Normals
-		n1 = model[m].tmpNorm[p1];
-		n2 = model[m].tmpNorm[p2];
-		n3 = model[m].tmpNorm[p3];
+			// Normals
+			n1 = model[m].tmpNorm[p1];
+			n2 = model[m].tmpNorm[p2];
+			n3 = model[m].tmpNorm[p3];
 
-		// Work out surface colour
-		intensity = CalcIntensity(v1, v2, v3, n1, n2, n3);
-		colour = model[m].objColour;
-		CalcColour(intensity, &colour);
+			// Work out surface colour
+			intensity = CalcIntensity(v1, v2, v3, n1, n2, n3);
+			colour = model[m].objColour;
+			CalcColour(intensity, &colour);
 
-		DrawTriangle(pixbuf, v1, v2, v3, colour); // TEST
+			DrawTriangle(pixbuf, v1, v2, v3, colour); // TEST
 
-		// Now draw borders
-		//cairo_move_to(cr, (int)v1.x, (int)v1.y);
-		//cairo_line_to(cr, (int)v2.x, (int)v2.y);
-		//cairo_line_to(cr, (int)v3.x, (int)v3.y);
-		//cairo_line_to(cr, (int)v1.x, (int)v1.y);
+			// Now draw borders
+			//cairo_move_to(cr, (int)v1.x, (int)v1.y);
+			//cairo_line_to(cr, (int)v2.x, (int)v2.y);
+			//cairo_line_to(cr, (int)v3.x, (int)v3.y);
+			//cairo_line_to(cr, (int)v1.x, (int)v1.y);
+		}
 	}
     DEBUG("DrawFlat() - [done]\r\n");
 }
