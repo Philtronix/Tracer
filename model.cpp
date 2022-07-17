@@ -2,8 +2,8 @@
 
 #include <string.h>
 
-//#define DEBUG(x) g_print(x)
-#define DEBUG(x)
+#define DEBUG(x) g_print(x)
+//#define DEBUG(x)
 
 Model::Model()
 {
@@ -12,9 +12,9 @@ Model::Model()
 	numNorm = 0;
 	zoom = 1.0;
 	show = true;
-	objColour.red   = FLAT_RED;
-	objColour.green = FLAT_GREEN;
-	objColour.blue  = FLAT_BLUE;
+//	objColour.red   = FLAT_RED;
+//	objColour.green = FLAT_GREEN;
+//	objColour.blue  = FLAT_BLUE;
 	name[0] = 0;
 }
 
@@ -27,7 +27,7 @@ Model::~Model()
 	//}
 }
 
-bool Model::LoadObjFile(char *path, char *file, double modelZoom)
+bool Model::LoadObjFile(char *file)
 {
 	// Load index file
 	FILE	*fp;
@@ -44,17 +44,13 @@ bool Model::LoadObjFile(char *path, char *file, double modelZoom)
 	int		nn;
 	int		ns;
 	SURFACE surface;
-	char	szModel[500];
 
-	zoom = modelZoom;
-	sprintf(szModel, "%s/%s", path, file);
+	g_print("Load : %s\r\n", file);
 
-	printf("Load : %s\r\n", file);
-
-	fp = fopen(szModel, "rb");
+	fp = fopen(file, "rb");
 	if (fp == NULL)
 	{
-		printf(line, "Failed to load file : %s", file);
+		g_print(line, "Failed to load file : %s", file);
 		return false;
 	}
 
@@ -64,7 +60,7 @@ bool Model::LoadObjFile(char *path, char *file, double modelZoom)
 	while (ReadLine(line, &nBytes, fp) >= 0 || nBytes > 0)
 	{
 		nLines++;
-		//printf("line [%s] %d\r\n", line, nBytes);
+		//g_print("line [%s] %d\r\n", line, nBytes);
 
 		if ('v' == line[0] && ' ' == line[1])
 		{
@@ -81,7 +77,7 @@ bool Model::LoadObjFile(char *path, char *file, double modelZoom)
 			}
 			else
 			{
-				printf("Bad vector [%s]\r\n", line);
+				g_print("Bad vector [%s]\r\n", line);
 			}
 		}
 		else if ('v' == line[0] && 'n' == line[1])
@@ -90,7 +86,7 @@ bool Model::LoadObjFile(char *path, char *file, double modelZoom)
 			// vn  21.0000 36.0000 -0.0000
 			if (3 == sscanf(line, "vn  %lf %lf %lf", &x, &y, &z))
 			{
-				//printf("vn 3 : %f %f %f\r\n", x, y, z);
+				//g_print("vn 3 : %f %f %f\r\n", x, y, z);
 				normal.push_back(Vec3D(x, y, z));
 				tmpNorm.push_back(Vec3D(x, y, z));
 				showNorm.push_back(Vec3D(x, y, z));
@@ -99,13 +95,13 @@ bool Model::LoadObjFile(char *path, char *file, double modelZoom)
 			}
 			else
 			{
-				printf("Bad vector normal : [%s]\r\n", line);
+				g_print("Bad vector normal : [%s]\r\n", line);
 			}
 		}
 		else if ('v' == line[0] && 't' == line[1])
 		{
 			// Texture co'ordinates
-			printf("ignorred [%s]\r\n", line);
+			g_print("ignorred [%s]\r\n", line);
 		}
 		else if ('f' == line[0] && ' ' == line[1])
 		{
@@ -142,7 +138,7 @@ bool Model::LoadObjFile(char *path, char *file, double modelZoom)
 				surface.n3 = n1;
 				surfaces.push_back(surface);
 				ns++;
-				printf("f12 : %d %d %d\r\n", v1, v2, v3);
+				//g_print("f12 : %d %d %d\r\n", v1, v2, v3);
 			}
 			else if (9 == sscanf(line, "f  %d/%d/%d %d/%d/%d %d/%d/%d", 
 										&v1, &t1, &n1, 
@@ -160,7 +156,7 @@ bool Model::LoadObjFile(char *path, char *file, double modelZoom)
 				surface.n3 = n3;
 				surfaces.push_back(surface);
 				ns++;
-				//printf("f9 : %d %d %d\r\n", v1, v2, v3);
+				//g_print("f9 : %d %d %d\r\n", v1, v2, v3);
 			}
 			else if (6 == sscanf(line, "f  %d//%d %d//%d %d//%d", 
 										&v1, &n1, 
@@ -175,7 +171,7 @@ bool Model::LoadObjFile(char *path, char *file, double modelZoom)
 				surface.n3 = n3;
 				surfaces.push_back(surface);
 				ns++;
-				//printf("f6 : %d %d %d\r\n", v1, v2, v3);
+				//g_print("f6 : %d %d %d\r\n", v1, v2, v3);
 			}
 			else if (3 == sscanf(line, "f %d %d %d", &v1, &v2, &v3))
 			{
@@ -184,37 +180,37 @@ bool Model::LoadObjFile(char *path, char *file, double modelZoom)
 				surface.p3 = v3;
 				surfaces.push_back(surface);
 				ns++;
-				//printf("f3 : %d %d %d (%d)\r\n", v1, v2, v3, nLines);
+				//g_print("f3 : %d %d %d (%d)\r\n", v1, v2, v3, nLines);
 			}
 			else
 			{
-				printf("Bad surface [%s] %d\r\n", line, nBytes);
+				g_print("Bad surface [%s] %d\r\n", line, nBytes);
 			}
 		}
 		else if ('#' == line[0])
 		{
 			// Comment
-			printf("Comment [%s]\r\n", line);
+			g_print("Comment [%s]\r\n", line);
 		}
 		else if (0 == strncmp(line, "mtllib", 6))
 		{
-			printf("mtllib [%s]\r\n", line);
+			g_print("mtllib [%s]\r\n", line);
 		}
 		else if (0 == strncmp(line, "usemtl", 6))
 		{
-			printf("usemtl [%s]\r\n", line);
+			g_print("usemtl [%s]\r\n", line);
 		}
 		else if (0 == strncmp(line, "s off", 5))
 		{
-			printf("s off [%s]\r\n", line);
+			g_print("s off [%s]\r\n", line);
 		}
 		else
 		{
-			printf("Bad line [%s] line %d, %d bytes\r\n", line, nLines, nBytes);
+			g_print("Bad line [%s] line %d, %d bytes\r\n", line, nLines, nBytes);
 		}
 	}
 	fclose(fp);
-	printf("Load : %s [done]\r\n", file);
+	g_print("Load : %s [done]\r\n", file);
 
 	numP = np;
 	numSurf = ns;
@@ -222,11 +218,11 @@ bool Model::LoadObjFile(char *path, char *file, double modelZoom)
 
 	if (0 == nn)
 	{
-		printf("No normals found, calculating\r\n");
+		DEBUG("No normals found, calculating\r\n");
 		Mesh_normalise();
 	}
 
-	printf("Vertex   = %d\r\nNormals  = %d\r\nLines    = %d\r\nSurfaces = %d\r\n", numP, numNorm, nLines, numSurf);
+	g_print("Vertex   = %d\r\nNormals  = %d\r\nLines    = %d\r\nSurfaces = %d\r\n", numP, numNorm, nLines, numSurf);
 
 	return true;
 }
@@ -384,7 +380,12 @@ int Model::ReadLine(char *dst, int *nBytes, FILE *fp)
 
 void Model::SetColour(ColourRef colour)
 {
-    objColour = colour;
+//    objColour = colour;
+
+	for (int s = 0; s < numSurf; s++)
+	{
+		surfaces[s].colour = colour;
+	}
 }
 
 // EOF

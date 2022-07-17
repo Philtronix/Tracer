@@ -25,16 +25,22 @@ Rectangle::~Rectangle()
 
 Rectangle::Rectangle(int width, int height, int numRows, int numColumns, Vec3D pos)
 {
-    double x = 0.0;
-    double y = 0.0;
-    double z = 0.0;
-    double dX = 0.0;
-    double dY = 0.0;
-    double sX = 0.0;
-    double sY = 0.0;
-    int p1;
-    int p2;
-    int p3;
+    double    x = 0.0;
+    double    y = 0.0;
+    double    z = 0.0;
+    double    dX = 0.0;
+    double    dY = 0.0;
+    double    sX = 0.0;
+    double    sY = 0.0;
+    int       p1;
+    int       p2;
+    int       p3;
+    int       g = 0;
+    bool      toggle_r = false;
+    bool      toggle_c = false;
+    ColourRef white = FLAT_WHITE;
+    ColourRef black = FLAT_BLACK;
+    int       s = 0;
 
     dX = width / numColumns;
     dY = height / numRows;
@@ -62,9 +68,19 @@ Rectangle::Rectangle(int width, int height, int numRows, int numColumns, Vec3D p
     // C D E F
 
     // Create surfaces
-    int g = 0;
     for (int r = 0; r < numRows; r++)
     {
+        if (true == toggle_r)
+        {
+            toggle_r = false;
+            toggle_c = false;
+        }
+        else
+        {
+            toggle_r = true;
+            toggle_c = true;
+        }
+
         for (int c = 0; c < numColumns; c++)
         {
             p1 = g + c;
@@ -74,6 +90,15 @@ Rectangle::Rectangle(int width, int height, int numRows, int numColumns, Vec3D p
             p2++;
             p3++;
             surfaces.push_back(SURFACE{p1, p2, p3});
+            if (true == toggle_c)
+            {
+                surfaces[s].colour = white;
+            }
+            else
+            {
+                surfaces[s].colour = black;
+            }
+            s++;
 
             p1 = g + c + 1;
             p2 = p1 + numColumns + 1;
@@ -82,6 +107,24 @@ Rectangle::Rectangle(int width, int height, int numRows, int numColumns, Vec3D p
             p2++;
             p3++;
             surfaces.push_back(SURFACE{p1, p2, p3});
+            if (true == toggle_c)
+            {
+                surfaces[s].colour = white;
+            }
+            else
+            {
+                surfaces[s].colour = black;
+            }
+            s++;
+
+            if (true == toggle_c)
+            {
+                toggle_c = false;
+            }
+            else
+            {
+                toggle_c = true;
+            }
         }
         g += numColumns + 1;
     }

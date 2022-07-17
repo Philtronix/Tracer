@@ -86,11 +86,13 @@ void DrawGouraud(cairo_t *cr)
 	{
 		if (true == model[m].show)
 		{
-			colour = model[m].objColour;
+//			colour = model[m].objColour;
 
 			DEBUG("Start surface loop\r\n");
 			for (i = 0; i < model[m].numSurf; i++)
 			{
+				colour = model[m].surfaces[i].colour;
+
 				// Unsorted
 				p1 = model[m].surfaces[i].p1 - 1;
 				p2 = model[m].surfaces[i].p2 - 1;

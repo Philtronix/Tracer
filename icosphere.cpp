@@ -142,12 +142,24 @@ Icosphere::Icosphere(int radius, int recursionLevel, Vec3D pos)
     }
 
     // Copy surfaces into main model
+    bool toggle;
     for (int i = 0; i < (int)surfaces.size(); i++)
     {
         // Fix the obj index start at 1 "bug"
         surfaces[i].p1++;
         surfaces[i].p2++;
         surfaces[i].p3++;
+
+        if (true == toggle)
+        {
+            surfaces[i].colour = FLAT_WHITE;
+            toggle = false;
+        }
+        else
+        {
+            surfaces[i].colour = FLAT_BLACK;
+            toggle = true;
+        }
     }
 
     // Correct size

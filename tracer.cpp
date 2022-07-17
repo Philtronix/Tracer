@@ -33,6 +33,7 @@
 static void   DrawView(cairo_t *cr, int style);
 static Vec3D  CrossProduct(Vec3D a, Vec3D b);
 static void   AddRow(const char *text);
+static void   OpenFile(char *filename);
 
 // GTK Objects
 GtkBuilder *builder; 
@@ -173,6 +174,7 @@ int main(int argc, char *argv[])
 		// Create an Icosphere
 		model[0].position = pos;
 		model[0] = Icosphere(100, 3, pos);
+		model[0].SetColour(ColourRef{40, 40, 255});
 		strcpy(model[0].name, "Blue Sphere");
 		AddRow(model[0].name);
 
@@ -180,7 +182,7 @@ int main(int argc, char *argv[])
 		pos.y =   0.0;
 		pos.z =  50.0;
 		model[1] = Icosphere(50, 2, pos);
-		model[1].SetColour(ColourRef{255, 0, 0});
+//		model[1].SetColour(ColourRef{255, 0, 0});
 		strcpy(model[1].name, "Red Sphere");
 		AddRow(model[1].name);
 
@@ -197,7 +199,7 @@ int main(int argc, char *argv[])
 		pos.y = 0.0;
 		pos.z = 0.0;
 		model[3] = Rectangle(600, 600, 10, 10, pos);
-		model[3].SetColour(ColourRef{40, 40, 255});
+//		model[3].SetColour(ColourRef{40, 40, 255});
 		strcpy(model[3].name, "Rectangle");
 		AddRow(model[3].name);
 
@@ -551,6 +553,83 @@ extern "C" G_MODULE_EXPORT void on_ZPos_changed(GtkEntry *e)
 		{
 			model[seletedModelRow].position.z = val;
 			gtk_widget_queue_draw(screen);
+		}
+	}
+}
+
+extern "C" G_MODULE_EXPORT void on_FileNew_activate(GtkMenuItem *m)
+{
+	g_print("File New\r\n");
+}
+
+extern "C" G_MODULE_EXPORT void on_FileOpen_activate(GtkMenuItem *m)
+{
+	GtkWidget *dialog;
+	GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+	gint res;
+
+	dialog = gtk_file_chooser_dialog_new ("Open File",
+										(GtkWindow *)window,
+										action,
+										("_Cancel"),
+										GTK_RESPONSE_CANCEL,
+										("_Open"),
+										GTK_RESPONSE_ACCEPT,
+										NULL);
+
+	res = gtk_dialog_run (GTK_DIALOG (dialog));
+	if (res == GTK_RESPONSE_ACCEPT)
+	{
+		char *filename;
+		GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
+		filename = gtk_file_chooser_get_filename (chooser);
+		g_print("Open File : <%s>\r\n", filename);
+		OpenFile(filename);
+
+		g_free (filename);
+	}
+
+	gtk_widget_destroy (dialog);	
+}
+
+extern "C" G_MODULE_EXPORT void on_FileSave_activate(GtkMenuItem *m)
+{
+	g_print("File Save\r\n");
+}
+
+extern "C" G_MODULE_EXPORT void on_FileSaveAs_activate(GtkMenuItem *m)
+{
+	g_print("File Save As\r\n");
+}
+
+extern "C" G_MODULE_EXPORT void on_FileQuit_activate(GtkMenuItem *m)
+{
+	g_print("File Quit\r\n");
+	gtk_main_quit();
+}
+
+extern "C" G_MODULE_EXPORT void on_HelpAbout_activate(GtkMenuItem *m)
+{
+	g_print("Help About\r\n");
+}
+
+static void OpenFile(char *filename)
+{
+	// Load the file
+	if (true == model[numModel].LoadObjFile(filename))
+	{
+		// Set the objects name
+		char *last = strrchr(filename, '/');
+		if (last != NULL)
+		{
+			last++;
+			strcpy(model[numModel].name, last);
+
+			model[numModel].SetColour(ColourRef{240, 40, 240});
+
+			// Add to tree view
+			AddRow(model[numModel].name);
+			numModel++;
 		}
 	}
 }

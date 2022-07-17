@@ -15,13 +15,15 @@ GTK:
 Treeview : https://www.cs.uni.edu/~okane/Code/Glade%20Cookbook/
 
 TODO :
-1. Delete Gouraud and rename DrawPhil.cpp .h - [done]
-2. Make icosphere into class based on model - [done]
-3. Add support for mulyiple models - [done]
+1. Surfaces have individual colours - [done]
+2. Activate menu - File : Quit - [done]
+3. File : load - [done]
 4. Optimise, points normals etc.
 5. Move vector maths to Vec3D.cpp, dot etc
 6. Add Phong
-7. Z buffer gouraud (leave fill on sort) - [done]
+7. Add primitives menu
+8. Individuaal primitives dialog boxes
+9. Editiable primitives values
 
 BUGS :
 1. Low poly icosphere shows odd effects

@@ -82,7 +82,9 @@ void DrawFlat(cairo_t *cr)
 
 			// Work out surface colour
 			intensity = CalcIntensity(v1, v2, v3, n1, n2, n3);
-			colour = model[m].objColour;
+//			colour = model[m].objColour;
+			colour = model[m].surfaces[sortList[i].surface].colour;
+
 			CalcColour(intensity, &colour);
 
 			DrawTriangle(pixbuf, v1, v2, v3, colour); // TEST

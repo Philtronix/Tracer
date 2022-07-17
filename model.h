@@ -10,6 +10,9 @@
 #define FLAT_GREEN 150.0
 #define FLAT_BLUE  250.0
 
+#define FLAT_BLACK ColourRef{240, 240, 240}
+#define FLAT_WHITE ColourRef{15, 15, 15}
+
 typedef struct SURFACETAG
 {
 	int	p1;
@@ -23,6 +26,8 @@ typedef struct SURFACETAG
 	int	n1;
 	int	n2;
 	int	n3;
+
+	ColourRef colour;
 } SURFACE;
 
 class Model
@@ -31,7 +36,7 @@ public:
 	Model();
 	~Model();
 	
-	bool LoadObjFile(char *path, char *file, double modelZoom);
+	bool LoadObjFile(char *file);
 	void Mesh_normalise();
     void SetColour(ColourRef colour);
 
@@ -44,14 +49,13 @@ public:
 
 	std::vector<SURFACE> surfaces;
 
-	int			numP;
-	int			numSurf;
-	int			numNorm;
-	double		zoom;
-    ColourRef	objColour;
-	Vec3D		position;
-	bool		show;
-	char		name[100];
+	int		numP;
+	int		numSurf;
+	int		numNorm;
+	double	zoom;
+	Vec3D	position;
+	bool	show;
+	char	name[100];
 
 private:
 	int   ReadLine(char *dst, int *nBytes, FILE *fp);
