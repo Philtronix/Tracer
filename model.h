@@ -51,6 +51,7 @@ public:
     ColourRef	objColour;
 	Vec3D		position;
 	bool		show;
+	char		name[100];
 
 private:
 	int   ReadLine(char *dst, int *nBytes, FILE *fp);

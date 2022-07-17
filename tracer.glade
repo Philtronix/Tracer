@@ -344,7 +344,7 @@
                     <property name="label" translatable="yes">Pitch</property>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
+                    <property name="left_attach">2</property>
                     <property name="top_attach">0</property>
                   </packing>
                 </child>
@@ -355,7 +355,7 @@
                     <property name="label" translatable="yes">Yaw</property>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
+                    <property name="left_attach">2</property>
                     <property name="top_attach">1</property>
                   </packing>
                 </child>
@@ -366,7 +366,7 @@
                     <property name="label" translatable="yes">Eye X</property>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
+                    <property name="left_attach">2</property>
                     <property name="top_attach">3</property>
                   </packing>
                 </child>
@@ -377,7 +377,7 @@
                     <property name="label" translatable="yes">Eye Y</property>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
+                    <property name="left_attach">2</property>
                     <property name="top_attach">4</property>
                   </packing>
                 </child>
@@ -388,7 +388,7 @@
                     <property name="label" translatable="yes">Eye Z</property>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
+                    <property name="left_attach">2</property>
                     <property name="top_attach">5</property>
                   </packing>
                 </child>
@@ -404,7 +404,7 @@
                     <property name="value_pos">right</property>
                   </object>
                   <packing>
-                    <property name="left_attach">2</property>
+                    <property name="left_attach">3</property>
                     <property name="top_attach">0</property>
                     <property name="width">3</property>
                   </packing>
@@ -421,7 +421,7 @@
                     <property name="value_pos">right</property>
                   </object>
                   <packing>
-                    <property name="left_attach">2</property>
+                    <property name="left_attach">3</property>
                     <property name="top_attach">1</property>
                     <property name="width">3</property>
                   </packing>
@@ -438,7 +438,7 @@
                     <property name="value_pos">right</property>
                   </object>
                   <packing>
-                    <property name="left_attach">2</property>
+                    <property name="left_attach">3</property>
                     <property name="top_attach">3</property>
                     <property name="width">3</property>
                   </packing>
@@ -455,7 +455,7 @@
                     <property name="value_pos">right</property>
                   </object>
                   <packing>
-                    <property name="left_attach">2</property>
+                    <property name="left_attach">3</property>
                     <property name="top_attach">4</property>
                     <property name="width">3</property>
                   </packing>
@@ -472,7 +472,7 @@
                     <property name="value_pos">right</property>
                   </object>
                   <packing>
-                    <property name="left_attach">2</property>
+                    <property name="left_attach">3</property>
                     <property name="top_attach">5</property>
                     <property name="width">3</property>
                   </packing>
@@ -484,7 +484,7 @@
                     <property name="label" translatable="yes">Target X</property>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
+                    <property name="left_attach">2</property>
                     <property name="top_attach">6</property>
                   </packing>
                 </child>
@@ -495,7 +495,7 @@
                     <property name="label" translatable="yes">Target Y</property>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
+                    <property name="left_attach">2</property>
                     <property name="top_attach">7</property>
                   </packing>
                 </child>
@@ -506,7 +506,7 @@
                     <property name="label" translatable="yes">Target Z</property>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
+                    <property name="left_attach">2</property>
                     <property name="top_attach">8</property>
                   </packing>
                 </child>
@@ -522,7 +522,7 @@
                     <property name="value_pos">right</property>
                   </object>
                   <packing>
-                    <property name="left_attach">2</property>
+                    <property name="left_attach">3</property>
                     <property name="top_attach">6</property>
                     <property name="width">3</property>
                   </packing>
@@ -539,7 +539,7 @@
                     <property name="value_pos">right</property>
                   </object>
                   <packing>
-                    <property name="left_attach">2</property>
+                    <property name="left_attach">3</property>
                     <property name="top_attach">7</property>
                     <property name="width">3</property>
                   </packing>
@@ -556,7 +556,7 @@
                     <property name="value_pos">right</property>
                   </object>
                   <packing>
-                    <property name="left_attach">2</property>
+                    <property name="left_attach">3</property>
                     <property name="top_attach">8</property>
                     <property name="width">3</property>
                   </packing>
@@ -568,7 +568,7 @@
                     <property name="label" translatable="yes">Light X</property>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
+                    <property name="left_attach">2</property>
                     <property name="top_attach">9</property>
                   </packing>
                 </child>
@@ -579,7 +579,7 @@
                     <property name="label" translatable="yes">Light Y</property>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
+                    <property name="left_attach">2</property>
                     <property name="top_attach">10</property>
                   </packing>
                 </child>
@@ -590,7 +590,7 @@
                     <property name="label" translatable="yes">Light Z</property>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
+                    <property name="left_attach">2</property>
                     <property name="top_attach">11</property>
                   </packing>
                 </child>
@@ -606,7 +606,7 @@
                     <property name="value_pos">right</property>
                   </object>
                   <packing>
-                    <property name="left_attach">2</property>
+                    <property name="left_attach">3</property>
                     <property name="top_attach">9</property>
                     <property name="width">3</property>
                   </packing>
@@ -623,7 +623,7 @@
                     <property name="value_pos">right</property>
                   </object>
                   <packing>
-                    <property name="left_attach">2</property>
+                    <property name="left_attach">3</property>
                     <property name="top_attach">10</property>
                     <property name="width">3</property>
                   </packing>
@@ -640,7 +640,7 @@
                     <property name="value_pos">right</property>
                   </object>
                   <packing>
-                    <property name="left_attach">2</property>
+                    <property name="left_attach">3</property>
                     <property name="top_attach">11</property>
                     <property name="width">3</property>
                   </packing>
@@ -657,7 +657,7 @@
                     <signal name="toggled" handler="on_gouraud_toggled" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="left_attach">3</property>
+                    <property name="left_attach">4</property>
                     <property name="top_attach">12</property>
                     <property name="width">2</property>
                   </packing>
@@ -674,7 +674,7 @@
                     <signal name="toggled" handler="on_phong_toggled" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="left_attach">3</property>
+                    <property name="left_attach">4</property>
                     <property name="top_attach">13</property>
                     <property name="width">2</property>
                   </packing>
@@ -690,7 +690,7 @@
                     <signal name="toggled" handler="on_points_toggled" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
+                    <property name="left_attach">2</property>
                     <property name="top_attach">12</property>
                     <property name="width">2</property>
                   </packing>
@@ -707,7 +707,7 @@
                     <signal name="toggled" handler="on_wireframe_toggled" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
+                    <property name="left_attach">2</property>
                     <property name="top_attach">13</property>
                     <property name="width">2</property>
                   </packing>
@@ -724,7 +724,7 @@
                     <signal name="toggled" handler="on_flat_toggled" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
+                    <property name="left_attach">2</property>
                     <property name="top_attach">14</property>
                     <property name="width">2</property>
                   </packing>
@@ -737,7 +737,7 @@
                     <property name="label" translatable="yes">label</property>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
+                    <property name="left_attach">2</property>
                     <property name="top_attach">16</property>
                   </packing>
                 </child>
@@ -751,7 +751,7 @@
                     <signal name="toggled" handler="on_showNormals_toggled" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
+                    <property name="left_attach">2</property>
                     <property name="top_attach">15</property>
                   </packing>
                 </child>
@@ -767,7 +767,7 @@
                     <signal name="toggled" handler="on_raytrace_toggled" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="left_attach">3</property>
+                    <property name="left_attach">4</property>
                     <property name="top_attach">14</property>
                     <property name="width">2</property>
                   </packing>
@@ -779,7 +779,7 @@
                     <property name="label" translatable="yes">Zoom</property>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
+                    <property name="left_attach">2</property>
                     <property name="top_attach">2</property>
                   </packing>
                 </child>
@@ -794,22 +794,134 @@
                     <property name="value_pos">right</property>
                   </object>
                   <packing>
-                    <property name="left_attach">2</property>
+                    <property name="left_attach">3</property>
                     <property name="top_attach">2</property>
                     <property name="width">3</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton">
-                    <property name="label" translatable="yes">button</property>
+                  <object class="GtkLabel">
                     <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="receives_default">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Name</property>
                   </object>
                   <packing>
                     <property name="left_attach">0</property>
                     <property name="top_attach">0</property>
                   </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">X pos
+</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Y pos
+</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Z pos
+</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">0</property>
+                    <property name="top_attach">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="XPos">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="input_purpose">number</property>
+                    <signal name="changed" handler="on_XPos_changed" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="YPos">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="input_purpose">number</property>
+                    <signal name="changed" handler="on_YPos_changed" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="ZPos">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="input_purpose">number</property>
+                    <signal name="changed" handler="on_ZPos_changed" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="Name">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <signal name="changed" handler="on_Name_changed" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="left_attach">1</property>
+                    <property name="top_attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
                 </child>
                 <child>
                   <placeholder/>

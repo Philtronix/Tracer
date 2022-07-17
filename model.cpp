@@ -2,6 +2,9 @@
 
 #include <string.h>
 
+//#define DEBUG(x) g_print(x)
+#define DEBUG(x)
+
 Model::Model()
 {
 	numP = 0;
@@ -12,6 +15,7 @@ Model::Model()
 	objColour.red   = FLAT_RED;
 	objColour.green = FLAT_GREEN;
 	objColour.blue  = FLAT_BLUE;
+	name[0] = 0;
 }
 
 Model::~Model()
@@ -251,7 +255,7 @@ void Model::Mesh_normalise()
 	Vec3D e2; 
 	Vec3D no;
 
-	printf("Mesh_normalise()\r\n");
+	DEBUG("Mesh_normalise()\r\n");
 
 	// Create empty normal vectors
     for (int i = 0; i < numP; i++ )
@@ -312,7 +316,7 @@ void Model::Mesh_normalise()
 	}
 
 	numNorm = numP;
-	printf("Mesh_normalise() - [done]\r\n");
+	DEBUG("Mesh_normalise() - [done]\r\n");
 }
 
 // Returns -1 on EOF

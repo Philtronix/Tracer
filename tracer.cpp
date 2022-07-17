@@ -51,6 +51,8 @@ bool  showNormals = false;
 int   view = VIEW_WIRE;
 int   ScreenWidth = 0;
 int   ScreenHeight = 0;
+int   seletedModelRow = -1;
+
 
 // 3D Variables
 double pitch = 0.0;
@@ -71,9 +73,13 @@ GtkCellRenderer   *cr1;
 GtkCellRenderer   *cr2;
 
 GtkTreeIter iter;		// iterators
-GtkTreeIter iterChild1;	// iterators
-GtkTreeIter iterChild2;	// iterators
+//GtkTreeIter iterChild1;	// iterators
+//GtkTreeIter iterChild2;	// iterators
 
+GtkWidget *entry_name;
+GtkWidget *entry_xPos;
+GtkWidget *entry_yPos;
+GtkWidget *entry_zPos;
 
 ///////////////////////////////////////////////
 
@@ -129,6 +135,11 @@ int main(int argc, char *argv[])
     ScreenWidth = w;
     ScreenHeight = h;
 
+	entry_name = GTK_WIDGET(gtk_builder_get_object(builder, "Name"));
+	entry_xPos = GTK_WIDGET(gtk_builder_get_object(builder, "XPos"));
+	entry_yPos = GTK_WIDGET(gtk_builder_get_object(builder, "YPos"));
+	entry_zPos = GTK_WIDGET(gtk_builder_get_object(builder, "ZPos"));
+
 	// Create pixbuf
 	pixbuf     = gdk_pixbuf_new( GDK_COLORSPACE_RGB, FALSE, 8, w, h);
 	n_channels = gdk_pixbuf_get_n_channels(pixbuf);
@@ -162,21 +173,24 @@ int main(int argc, char *argv[])
 		// Create an Icosphere
 		model[0].position = pos;
 		model[0] = Icosphere(100, 3, pos);
-		AddRow("Blue Sphere");
+		strcpy(model[0].name, "Blue Sphere");
+		AddRow(model[0].name);
 
 		pos.x = 200.0;
 		pos.y =   0.0;
 		pos.z =  50.0;
 		model[1] = Icosphere(50, 2, pos);
 		model[1].SetColour(ColourRef{255, 0, 0});
-		AddRow("Red Sphere");
+		strcpy(model[1].name, "Red Sphere");
+		AddRow(model[1].name);
 
 		pos.x =   0.0;
 		pos.y = 200.0;
 		pos.z =   0.0;
 		model[2] = Icosphere(75, 2, pos);
 		model[2].SetColour(ColourRef{0, 255, 0});
-		AddRow("Green Sphere");
+		strcpy(model[2].name, "Green Sphere");
+		AddRow(model[2].name);
 
 		// Create a rectangle
 		pos.x = 0.0;
@@ -184,7 +198,8 @@ int main(int argc, char *argv[])
 		pos.z = 0.0;
 		model[3] = Rectangle(600, 600, 10, 10, pos);
 		model[3].SetColour(ColourRef{40, 40, 255});
-		AddRow("Rectangle");
+		strcpy(model[3].name, "Rectangle");
+		AddRow(model[3].name);
 
 		// Create a Cube
 		pos.x = -200.0;
@@ -192,7 +207,8 @@ int main(int argc, char *argv[])
 		pos.z =    0.0;
 		model[4] = Cube(300, 20, 300, pos);
 		model[4].SetColour(ColourRef{40, 40, 255});
-		AddRow("Cube");
+		strcpy(model[4].name, "Cube");
+		AddRow(model[4].name);
 
 		// Create a Torus
 		pos.x =    0.0;
@@ -200,7 +216,8 @@ int main(int argc, char *argv[])
 		pos.z =   50.0;
 		model[5] = Torus(10, 20, 50.0, 20.0, pos);
 		model[5].SetColour(ColourRef{240, 40, 240});
-		AddRow("Torus");
+		strcpy(model[5].name, "Torus");
+		AddRow(model[5].name);
 
 		// Create a Cylinder
 		pos.x =  200.0;
@@ -208,7 +225,8 @@ int main(int argc, char *argv[])
 		pos.z =    0.0;
 		model[6] = Cylinder(100, 50, 20, pos);
 		model[6].SetColour(ColourRef{40, 240, 240});
-		AddRow("Cylinder");
+		strcpy(model[6].name, "Cylinder");
+		AddRow(model[6].name);
 
 		// Create a Cone
 		pos.x = 200.0;
@@ -216,7 +234,8 @@ int main(int argc, char *argv[])
 		pos.z =   0.0;
 		model[7] = Cone(100, 50, 10, pos);
 		model[7].SetColour(ColourRef{40, 40, 255});
-		AddRow("Cone");
+		strcpy(model[7].name, "Cone");
+		AddRow(model[7].name);
 
 		numModel = 8;
 	}
@@ -393,25 +412,55 @@ extern "C" G_MODULE_EXPORT void on_select_changed(GtkTreeSelection *c)
 { 
 	gchar        *value;
 	gboolean     box;
-	GtkTreeIter  iter;
-	GtkTreeModel *model;
+	GtkTreeModel *treeModel;
+	int len;
+	int pos = 0;
+	char szBuffer[100] = {0};
+	GtkTreePath *path;
 
-//	Function 'get_tree_selection_get_selected' sets the model 
-//	and iter from the selection c
-
-	if (gtk_tree_selection_get_selected(GTK_TREE_SELECTION(c), &model, &iter) == FALSE)
+	if (gtk_tree_selection_get_selected(GTK_TREE_SELECTION(c), &treeModel, &iter) == FALSE)
 	{
 		return;
 	}
  
-	gtk_tree_model_get(model, &iter, 0, &value,  -1); // get column 0
-	printf("Select signal received: col 0 = \"%s\"; ", value);
+	gtk_tree_model_get(treeModel, &iter, 0, &value,  -1); // get column 0
+	gtk_tree_model_get(treeModel, &iter, 1, &box,  -1);   // get column 1
 
-	gtk_tree_model_get(model, &iter, 1, &box,  -1); // get column 1
-	printf("col 1  = \"%d\"\n", box);
+	// Clear the old text
+	gtk_editable_delete_text(GTK_EDITABLE(entry_name), 0, -1);
+	gtk_editable_delete_text(GTK_EDITABLE(entry_xPos), 0, -1);
+	gtk_editable_delete_text(GTK_EDITABLE(entry_yPos), 0, -1);
+	gtk_editable_delete_text(GTK_EDITABLE(entry_zPos), 0, -1);
+
+	// Which row is selected ?
+	path = gtk_tree_model_get_path(treeModel, &iter);
+	seletedModelRow = gtk_tree_path_get_indices(path)[0];
+
+	// Set the text boxes to the correct values
+	// Copy in the model Nme from selected row
+	pos = 0;
+	len = strlen(value);
+	gtk_editable_insert_text(GTK_EDITABLE(entry_name), value, len, &pos);
+
+	pos = 0;
+	sprintf(szBuffer, "%f", model[seletedModelRow].position.x);
+	len = strlen(szBuffer);
+	gtk_editable_insert_text(GTK_EDITABLE(entry_xPos), szBuffer, len, &pos);
+
+	pos = 0;
+	sprintf(szBuffer, "%f", model[seletedModelRow].position.y);
+	len = strlen(szBuffer);
+	gtk_editable_insert_text(GTK_EDITABLE(entry_yPos), szBuffer, len, &pos);
+
+	pos = 0;
+	sprintf(szBuffer, "%f", model[seletedModelRow].position.z);
+	len = strlen(szBuffer);
+	gtk_editable_insert_text(GTK_EDITABLE(entry_zPos), szBuffer, len, &pos);
+
+//	g_print("model %d <%s>\r\n", seletedModelRow, value);
 }
 
-extern "C" G_MODULE_EXPORT void	on_cr2_toggled (GtkCellRendererToggle *cell, gchar *path_string)
+extern "C" G_MODULE_EXPORT void	on_cr2_toggled(GtkCellRendererToggle *cell, gchar *path_string)
 { 
 	GtkTreeIter		iter;
 	GtkTreeModel	*treeModel;
@@ -419,12 +468,9 @@ extern "C" G_MODULE_EXPORT void	on_cr2_toggled (GtkCellRendererToggle *cell, gch
 	gchar			*text;
 	int				m;
 
-	printf("---------------------------------------\n");
-	printf("box toggle signal received: path = \"%s\"\n", path_string);	// path gives row and child data
 	treeModel = gtk_tree_view_get_model(tv1);							// get the tree model
 	gtk_tree_model_get_iter_from_string(treeModel, &iter, path_string);	// get iter from path
 	gtk_tree_model_get(treeModel, &iter, 0, &text, -1);					// get the text pointer of col 0
-	printf ("For row text  = \"%s\"\n", text);
 	gtk_tree_model_get(treeModel, &iter, 1, &t, -1);					// get the boolean value of col 1
 
 	m = atoi(path_string);
@@ -440,10 +486,73 @@ extern "C" G_MODULE_EXPORT void	on_cr2_toggled (GtkCellRendererToggle *cell, gch
 	}
 
 	gtk_widget_queue_draw(screen);
-	
 	gtk_tree_store_set(treeStore, &iter, 1, t, -1); // alter col 1 check box
-	printf("---------------------------------------\n");
 	return;
+}
+
+extern "C" G_MODULE_EXPORT void on_Name_changed(GtkEntry *e)
+{
+	const char *text = gtk_entry_get_text(e);
+
+	if (seletedModelRow >= 0)
+	{
+		if (strlen(text) > 0)
+		{
+			if (0 != strcmp(text, model[seletedModelRow].name))
+			{
+				// Update model
+				strcpy(model[seletedModelRow].name, text);
+
+				// Update tree view
+				gtk_tree_store_set(treeStore, &iter, 0, text, -1);
+			}
+		}
+	}
+}
+
+extern "C" G_MODULE_EXPORT void on_XPos_changed(GtkEntry *e)
+{
+	const char *text = gtk_entry_get_text(e);
+
+	if (strlen(text) > 0)
+	{
+		double val = strtod(text, NULL);
+		if (val != model[seletedModelRow].position.x)
+		{
+			model[seletedModelRow].position.x = val;
+			gtk_widget_queue_draw(screen);
+		}
+	}
+}
+
+extern "C" G_MODULE_EXPORT void on_YPos_changed(GtkEntry *e)
+{
+	const char *text = gtk_entry_get_text(e);
+
+	if (strlen(text) > 0)
+	{
+		double val = strtod(text, NULL);
+		if (val != model[seletedModelRow].position.y)
+		{
+			model[seletedModelRow].position.y = val;
+			gtk_widget_queue_draw(screen);
+		}
+	}
+}
+
+extern "C" G_MODULE_EXPORT void on_ZPos_changed(GtkEntry *e)
+{
+	const char *text = gtk_entry_get_text(e);
+
+	if (strlen(text) > 0)
+	{
+		double val = strtod(text, NULL);
+		if (val != model[seletedModelRow].position.z)
+		{
+			model[seletedModelRow].position.z = val;
+			gtk_widget_queue_draw(screen);
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
