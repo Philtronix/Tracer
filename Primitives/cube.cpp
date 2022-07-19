@@ -1,4 +1,4 @@
-#include "Vec3D.h"
+#include "../Vec3D.h"
 #include <sys/types.h>
 #include <math.h>
 #include "cube.h"

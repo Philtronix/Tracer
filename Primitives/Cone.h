@@ -1,6 +1,6 @@
 #pragma once
 
-#include "model.h"
+#include "../model.h"
 #include <map>
 
 class Cone : public Model

@@ -12,12 +12,12 @@
 
 #include "tracer.h"
 #include "model.h"
-#include "icosphere.h"
-#include "Rectangle.h"
-#include "cube.h"
-#include "Torus.h"
-#include "Cylinder.h"
-#include "Cone.h"
+#include "Primitives/icosphere.h"
+#include "Primitives/Rectangle.h"
+#include "Primitives/cube.h"
+#include "Primitives/Torus.h"
+#include "Primitives/Cylinder.h"
+#include "Primitives/Cone.h"
 
 #include "Views/DrawPoints.h"
 #include "Views/DrawWire.h"

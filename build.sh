@@ -14,11 +14,11 @@ g++ -rdynamic -o tracer -Wall -g \
     Views/DrawFlat.cpp \
     Views/DrawGouraud.cpp \
     Views/DrawPhil.cpp \
-    icosphere.cpp \
-    Rectangle.cpp \
-    cube.cpp \
-    Torus.cpp \
-    Cylinder.cpp \
-    Cone.cpp \
+    Primitives/icosphere.cpp \
+    Primitives/Rectangle.cpp \
+    Primitives/cube.cpp \
+    Primitives/Torus.cpp \
+    Primitives/Cylinder.cpp \
+    Primitives/Cone.cpp \
     $(pkg-config --cflags --libs gtk+-3.0 gmodule-2.0 )
 
