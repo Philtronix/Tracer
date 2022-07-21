@@ -5,9 +5,8 @@
 
 extern Model model[];
 extern int   numModel;
-extern int   zoom;
-extern int        ScreenWidth;
-extern int        ScreenHeight;
+extern int   ScreenWidth;
+extern int   ScreenHeight;
 
 void DrawPoints(cairo_t *cr)
 {
@@ -22,8 +21,8 @@ void DrawPoints(cairo_t *cr)
     {
         for (i = 0; i < model[m].numP; i++)
         {
-            x1 = (int)(model[m].tmp[i].x * zoom) + w;
-            y1 = (int)(model[m].tmp[i].y * zoom) + h;
+            x1 = (int)model[m].tmp[i].x + w;
+            y1 = (int)model[m].tmp[i].y + h;
 
             cairo_rectangle(cr, x1, y1, 3, 3);
         }

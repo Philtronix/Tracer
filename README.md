@@ -25,6 +25,23 @@ TODO :
 8. Individuaal primitives dialog boxes
 9. Editiable primitives values
 
+https://www.braynzarsoft.net/viewtutorial/q16390-transformations-and-world-view-projection-space-matrices
+Add a world matrix to each model to transform from object to world.
+  Rotate
+  Scale
+  Translate
+Add View matrix (Camera)
+Add Projection matrix
+finalvertex.pos = vertex.pos * worldMatrix * viewMatrix * projectionMatrix;
+
+
+Left Handed Coordinate System
+The left handed coordinate system is when the positive y axis is pointing up, the positive x axis is pointing right, and the positive z axis is pointing forward.
+
+Right Handed Coordinate System
+The right handed coordinate system is when the positive y axis is pointing up, the positive x axis is pointing right, and the positive z axis is pointing towards you.
+(use left)
+
 BUGS :
 1. Low poly icosphere shows odd effects
 2. Monkey.obj in Gouraud shows "RED" errors

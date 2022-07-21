@@ -1,4 +1,3 @@
-//#include "stdafx.h"
 #include "Matrix4.h"
 #include <math.h>
 #include <cstdio>
@@ -19,7 +18,6 @@ Matrix4::Matrix4(Vec3D v1, Vec3D v2, Vec3D v3, Vec3D v4)
 	r4 = v4;
 }
 
-
 // a b c d     x   ax + by + cz + d
 // e f g h  *  y = ex + fy + gz + h
 // i j k l     z   ix + jy + kz + l
@@ -38,6 +36,117 @@ Vec3D Matrix4::operator*(const Vec3D *m)
 }
 */
 
+#define PI         3.147
+
+void Matrix4::World(double rotX,   double rotY,   double rotZ,
+					double transX, double transY, double transZ,
+					double scale)
+{
+	// Rotate
+	double phi = (rotX * PI) / 180.0;
+	double omg = (rotY * PI) / 180.0;
+	double kap = (rotZ * PI) / 180.0;
+
+	this->r1.x = cos(phi) * cos(kap);
+	this->r1.y = cos(omg) * sin(kap) + sin(omg) * sin(phi) * cos(kap);
+	this->r1.z = sin(omg) * sin(kap) - cos(omg) * sin(phi) * cos(kap);
+
+	this->r2.x = -cos(phi) * sin(kap);
+	this->r2.y =  cos(omg) * cos(kap) - sin(omg) * sin(phi) * sin(kap);
+	this->r2.z =  sin(omg) * cos(kap) + cos(omg) * sin(phi) * sin(kap);
+
+	this->r3.x =  sin(phi);
+	this->r3.y = -sin(omg) * cos(phi);
+	this->r3.z =  cos(omg) * cos(phi);
+
+	// Scale
+	// [x, 0, 0, 0]
+	// [0, y, 0, 0]
+	// [0, 0, z, 0]
+	// [0, 0, 0, 1]
+
+//	this->r1.x *= scale;
+//	this->r2.y *= scale;
+//	this->r3.z *= scale;
+
+/*
+matrix x matrix
+[21, 22, 23, 24]   [ 5,  6,  7,  8]   [_00, _01, _02, _03]
+[25, 26, 27, 28] x [ 9, 10, 11, 12] = [_10, _11, _12, _13]
+[29, 30, 31, 32]   [13, 14, 15, 16]   [_20, _21, _22, _23]
+[33, 34, 35, 36]   [17, 18, 19, 20]   [_30, _31, _32, _33]
+
+Get the first row of the final matrix
+Get the first element of this row in the final matrix:
+                   [ 5]
+[21, 22, 23, 24] . [ 9] = [21*5 + 22*9  + 23*13 + 24*17] = [105 + 198 + 299 + 408] =  1010 = _00
+                   [13]
+                   [17]
+
+Get the second element of this row in the final matrix:
+                   [ 6]
+[21, 22, 23, 24] . [10] = [21*6 + 22*10 + 23*14 + 24*18] = [126 + 220 + 322 + 432] =  1100 = _01
+                   [14]
+                   [18]
+
+Get the third element of this row in the final matrix:
+                   [ 7]
+[21, 22, 23, 24] . [11] = [21*7 + 22*11 + 23*15 + 24*19] = [147 + 242 + 345 + 456] =  1190 = _02
+                   [15]
+                   [19]
+
+Get the fourth element of this row in the final matrix:
+                   [ 8]
+[21, 22, 23, 24] . [12] = [21*8 + 22*12 + 23*16 + 24*20] = [168 + 264 + 368 + 480] =  1280 = _03
+                   [16]
+                   [20]
+
+first row of final matrix is:
+[1010, 1100, 1190, 1280]
+
+now lets get the second row of the final matrix
+Get the first element of this row in the final matrix:
+                   [ 5]
+[25, 26, 27, 28] . [ 9] = [25*5 + 26*9  + 27*13 + 28*17] = [125 + 234 + 351 + 476] =  1186 = _00
+                   [13]
+                   [17]
+
+Get the second element of this row in the final matrix:
+                   [ 6]
+[25, 26, 27, 28] . [10] = [25*6 + 26*10 + 27*14 + 28*18] = [150 + 260 + 378 + 504] =  1292 = _01
+                   [14]
+                   [18]
+
+Get the third element of this row in the final matrix:
+                   [ 7]
+[25, 26, 27, 28] . [11] = [25*7 + 26*11 + 27*15 + 28*19] = [175 + 286 + 405 + 532] =  1398 = _02
+                   [15]
+                   [19]
+
+Get the fourth element of this row in the final matrix:
+                   [ 8]
+[25, 26, 27, 28] . [12] = [25*8 + 26*12 + 27*16 + 28*20] = [200 + 312 + 432 + 560] =  1504 = _03
+                   [16]
+                   [20]
+
+first row of final matrix is:
+[1186, 1292, 1398, 1504]
+
+I won't do the last two rows here, but i'll give you the final result so if you want to try yourself you can compare
+[1010, 1100, 1190, 1280]
+[1186, 1292, 1398, 1504]
+[1362, 1484, 1606, 1728]
+[1538, 1676, 1814, 1952]
+*/
+
+	// Translate
+	// [1, 0, 0, x]
+	// [0, 1, 0, y]
+	// [0, 0, 1, z]
+	// [0, 0, 0, 1]
+
+
+}
 
 // Pitch must be in the range of [-90 ... 90] degrees and 
 // yaw must be in the range of [0 ... 360] degrees.
@@ -47,8 +156,8 @@ void Matrix4::FPSViewRH(Vec3D eye, double pitch, double yaw)
 	// I assume the values are already converted to radians.
 	double cosPitch = cos(pitch);
 	double sinPitch = sin(pitch);
-	double cosYaw = cos(yaw);
-	double sinYaw = sin(yaw);
+	double cosYaw   = cos(yaw);
+	double sinYaw   = sin(yaw);
 
 	Vec3D xaxis(cosYaw, 0, -sinYaw);
 	Vec3D yaxis(sinYaw * sinPitch,  cosPitch,   cosYaw * sinPitch);

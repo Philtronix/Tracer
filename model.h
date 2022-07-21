@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "Vec3D.h"
 #include "tracer.h"
+#include "Matrix4.h"
 
 #include <vector>
 
@@ -36,7 +37,7 @@ public:
 	Model();
 	~Model();
 	
-	bool LoadObjFile(char *file);
+	bool LoadObjFile(const char *file);
 	void Mesh_normalise();
     void SetColour(ColourRef colour);
 
@@ -56,6 +57,10 @@ public:
 	Vec3D	position;
 	bool	show;
 	char	name[100];
+
+	// How to manipulate model to make it ove from object space to world space
+	Matrix4 world;
+
 
 private:
 	int   ReadLine(char *dst, int *nBytes, FILE *fp);

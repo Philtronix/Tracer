@@ -12,9 +12,6 @@ Model::Model()
 	numNorm = 0;
 	zoom = 1.0;
 	show = true;
-//	objColour.red   = FLAT_RED;
-//	objColour.green = FLAT_GREEN;
-//	objColour.blue  = FLAT_BLUE;
 	name[0] = 0;
 }
 
@@ -27,7 +24,7 @@ Model::~Model()
 	//}
 }
 
-bool Model::LoadObjFile(char *file)
+bool Model::LoadObjFile(const char *file)
 {
 	// Load index file
 	FILE	*fp;
@@ -68,9 +65,6 @@ bool Model::LoadObjFile(char *file)
 			if (3 == sscanf(line, "v  %lf %lf %lf", &x, &y, &z))
 			{
 				// Vector
-				x *= zoom;
-				y *= zoom;
-				z *= zoom;
 				data.push_back(Vec3D(x, y, z));
 				tmp.push_back(Vec3D(x, y, z));
 				np++;
@@ -212,15 +206,22 @@ bool Model::LoadObjFile(char *file)
 	fclose(fp);
 	g_print("Load : %s [done]\r\n", file);
 
-	numP = np;
+	numP    = np;
 	numSurf = ns;
 	numNorm = nn;
+
+	position.x = 0.0;
+	position.y = 0.0;
+	position.z = 0.0;
 
 	if (0 == nn)
 	{
 		DEBUG("No normals found, calculating\r\n");
 		Mesh_normalise();
 	}
+
+	// Set defaut colour
+	SetColour(ColourRef{40, 40, 255});
 
 	g_print("Vertex   = %d\r\nNormals  = %d\r\nLines    = %d\r\nSurfaces = %d\r\n", numP, numNorm, nLines, numSurf);
 
@@ -380,8 +381,6 @@ int Model::ReadLine(char *dst, int *nBytes, FILE *fp)
 
 void Model::SetColour(ColourRef colour)
 {
-//    objColour = colour;
-
 	for (int s = 0; s < numSurf; s++)
 	{
 		surfaces[s].colour = colour;

@@ -30,9 +30,5 @@ public:
 	double	y;
 	double	z;
 	double	w;
-
-//	double	nx;
-//	double	ny;
-//	double	nz;
 };
 

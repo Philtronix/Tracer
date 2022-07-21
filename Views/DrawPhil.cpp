@@ -4,7 +4,6 @@
 #include "../model.h"
 
 extern Model      model;
-extern int        zoom;
 extern item       sortList[9000];
 extern Vec3D      lightPos;
 extern GdkPixbuf  *pixbuf;
@@ -72,17 +71,17 @@ void DrawPhil(cairo_t *cr)
 		p3 = model.surfaces[sortList[i].surface].p3 - 1;
 
 		// Filled triangle
-		v1.x = (model.tmp[p1].x * zoom) + w;
-		v1.y = (model.tmp[p1].y * zoom) + h;
-		v1.z = (model.tmp[p1].z * zoom);
+		v1.x = model.tmp[p1].x  + w;
+		v1.y = model.tmp[p1].y + h;
+		v1.z = model.tmp[p1].z;
 
-		v2.x = (model.tmp[p2].x * zoom) + w;
-		v2.y = (model.tmp[p2].y * zoom) + h;
-		v2.z = (model.tmp[p2].z * zoom);
+		v2.x = model.tmp[p2].x + w;
+		v2.y = model.tmp[p2].y + h;
+		v2.z = model.tmp[p2].z;
 
-		v3.x = (model.tmp[p3].x * zoom) + w;
-		v3.y = (model.tmp[p3].y * zoom) + h;
-		v3.z = (model.tmp[p3].z * zoom);
+		v3.x = model.tmp[p3].x + w;
+		v3.y = model.tmp[p3].y + h;
+		v3.z = model.tmp[p3].z;
 
 		// Normals
 		n1 = model.tmpNorm[p1];

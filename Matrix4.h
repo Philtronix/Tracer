@@ -2,7 +2,6 @@
 
 #include "Vec3D.h"
 
-
 class Matrix4
 {
 public:
@@ -18,6 +17,10 @@ public:
 
 	void FPSViewRH(Vec3D eye, double pitch, double yaw);
 	void LookAtRH(Vec3D eye, Vec3D target, Vec3D up);
+
+	void World(double rotX, double rotY, double rotZ,
+			   double transX, double transY, double transZ,
+			   double scale);
 
 
 	////////// NEW ///////////////

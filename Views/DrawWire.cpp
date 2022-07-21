@@ -5,7 +5,6 @@
 
 extern Model model[];
 extern int   numModel;
-extern int   zoom;
 extern int   ScreenWidth;
 extern int   ScreenHeight;
 
@@ -28,10 +27,10 @@ void DrawWire(cairo_t *cr)
                 p2 = model[m].surfaces[i].p2 - 1;
                 p3 = model[m].surfaces[i].p3 - 1;
 
-                cairo_move_to(cr, (int)(model[m].tmp[p1].x * zoom) + w, (int)(model[m].tmp[p1].y * zoom) + h);
-                cairo_line_to(cr, (int)(model[m].tmp[p2].x * zoom) + w, (int)(model[m].tmp[p2].y * zoom) + h);
-                cairo_line_to(cr, (int)(model[m].tmp[p3].x * zoom) + w, (int)(model[m].tmp[p3].y * zoom) + h);
-                cairo_line_to(cr, (int)(model[m].tmp[p1].x * zoom) + w, (int)(model[m].tmp[p1].y * zoom) + h);
+                cairo_move_to(cr, (int)model[m].tmp[p1].x + w, (int)model[m].tmp[p1].y + h);
+                cairo_line_to(cr, (int)model[m].tmp[p2].x + w, (int)model[m].tmp[p2].y + h);
+                cairo_line_to(cr, (int)model[m].tmp[p3].x + w, (int)model[m].tmp[p3].y + h);
+                cairo_line_to(cr, (int)model[m].tmp[p1].x + w, (int)model[m].tmp[p1].y + h);
             }
         }
     }

@@ -56,8 +56,9 @@ int   seletedModelRow = -1;
 
 
 // 3D Variables
-double pitch = 0.0;
-double yaw = 0.0;
+double rotateY = 0.0;
+double rotateX = 0.0;
+double rotateZ = 0.0;
 int    zoom = 1;
 Vec3D  eye(0.0, 0.0, 0.0);
 Vec3D  target(0.0, 0.0, 0.0);
@@ -164,13 +165,16 @@ int main(int argc, char *argv[])
 		pos.z = 0.0;
 
 //		model[0].LoadObjFile(szPath, (char *)"/Models/Monkey.obj", 160);		// Texture, normals
-//		model[0].LoadObjFile(szPath, (char *)"/Models/Teapot_2.obj", 3);		// Normals
+		model[0].LoadObjFile("/home/phil/Work/GTK/Tracer/Models/Teapot_2.obj");	// Normals
 //		model[0].LoadObjFile(szPath, (char *)"/Models/icosahedron.obj", 150);	// Normals
 //		model[0].LoadObjFile(szPath, (char *)"/Models/BigTeapot.obj", 100);		// -
 //		model[0].LoadObjFile(szPath, (char *)"/Models/Teapot.obj", 6);			// Texture. normals
 //		model[0].LoadObjFile(szPath, (char *)"/Models/cube.obj", 100);			// Texture, normals
 //		model[0].LoadObjFile(szPath, (char *)"/Models/axis.obj", 20);			// -
 
+		numModel = 1;
+
+/*
 		// Create an Icosphere
 		model[0].position = pos;
 		model[0] = Icosphere(100, 3, pos);
@@ -240,6 +244,7 @@ int main(int argc, char *argv[])
 		AddRow(model[7].name);
 
 		numModel = 8;
+*/
 	}
 	else
 	{
@@ -262,15 +267,21 @@ static void AddRow(const char *text)
 ///////////////////////////////////////////////////////////////////////////////
 // GTK Callback functions
 
-extern "C" G_MODULE_EXPORT void on_pitch_value_changed(GtkAdjustment* adjustment, gpointer data) 
+extern "C" G_MODULE_EXPORT void on_rotateY_value_changed(GtkAdjustment* adjustment, gpointer data) 
 {
-	pitch = gtk_adjustment_get_value(adjustment);
+	rotateY = gtk_adjustment_get_value(adjustment);
 	gtk_widget_queue_draw(screen);
 }
 
-extern "C" G_MODULE_EXPORT void on_yaw_value_changed(GtkAdjustment* adjustment, gpointer data) 
+extern "C" G_MODULE_EXPORT void on_rotateX_value_changed(GtkAdjustment* adjustment, gpointer data) 
 {
-	yaw = gtk_adjustment_get_value(adjustment);
+	rotateX = gtk_adjustment_get_value(adjustment);
+	gtk_widget_queue_draw(screen);
+}
+
+extern "C" G_MODULE_EXPORT void on_rotateZ_value_changed(GtkAdjustment* adjustment, gpointer data) 
+{
+	rotateZ = gtk_adjustment_get_value(adjustment);
 	gtk_widget_queue_draw(screen);
 }
 
@@ -709,6 +720,9 @@ void ViewMatrix(Vec3D *result, Matrix4 *matrix, Vec3D *data)
 	result->x = (matrix->r1.x * data->x) + (matrix->r1.y * data->y) + (matrix->r1.z * data->z) + matrix->r1.x;
 	result->y = (matrix->r2.x * data->x) + (matrix->r2.y * data->y) + (matrix->r2.z * data->z) + matrix->r2.y;
 	result->z = (matrix->r3.x * data->x) + (matrix->r3.y * data->y) + (matrix->r3.z * data->z) + matrix->r3.z;
+//	result->x = (matrix->r1.x * data->x) + (matrix->r1.y * data->y) + (matrix->r1.z * data->z) + matrix->r1.w;
+//	result->y = (matrix->r2.x * data->x) + (matrix->r2.y * data->y) + (matrix->r2.z * data->z) + matrix->r2.w;
+//	result->z = (matrix->r3.x * data->x) + (matrix->r3.y * data->y) + (matrix->r3.z * data->z) + matrix->r3.w;
 	result->w = 1;
 }
 
@@ -736,11 +750,17 @@ void DrawView(cairo_t *cr, int style)
 	DEBUG("DrawView()\r\n");
 
 	// Radians = (degrees * pi) / 180;
-	double radPitch = (pitch * PI) / 180.0;
-	double radYaw = (yaw * PI) / 180.0;
+//	double radPitch = (pitch * PI) / 180.0;
+//	double radYaw = (yaw * PI) / 180.0;
 
 	// OLD
-	view.FPSViewRH(eye, radPitch, radYaw);
+//	view.FPSViewRH(eye, radPitch, radYaw);
+
+
+//void Matrix4::World(float rotX,   float rotY,   float rotZ,
+//					float transX, float transY, float transZ,
+//					float scale)
+	view.World(rotateX, rotateY, rotateZ, 1.0, 1.0, 1.0, zoom);
 
 	// NEW
 //	Vec3D vUp = { 0.0, 1.0, 0.0 };
@@ -752,9 +772,10 @@ void DrawView(cairo_t *cr, int style)
 		DEBUG("points ");
 		for (i = 0; i < model[m].numP; i++)
 		{
-			// Move the model to the correct position
-			tmpVec = model[m].data[i] + model[m].position;
 
+			// Move the model to the correct position
+/*
+			tmpVec = model[m].data[i] + model[m].position;
 			// ---- TEST ----
 			if (0 == m)
 			{
@@ -762,6 +783,8 @@ void DrawView(cairo_t *cr, int style)
 			}
 
 			ViewMatrix(&model[m].tmp[i], &view, &tmpVec);
+*/
+			ViewMatrix(&model[m].tmp[i], &view, &model[m].data[i]);
 		}
 		DEBUG("- [done]\r\n");
 
@@ -838,11 +861,11 @@ void DrawView(cairo_t *cr, int style)
 //				if (model[0].showNorm[i].z < model[0].tmp[i].z)
 				{
 					//g_print("%0.2f %0.2f %0.2f \r\n", model[0].normal[i].x, model[0].normal[i].y, model[0].normal[i].z);
-					x1 = (int)(model[m].tmp[i].x * zoom) + w;
-					y1 = (int)(model[m].tmp[i].y * zoom) + h;
+					x1 = (int)model[m].tmp[i].x + w;
+					y1 = (int)model[m].tmp[i].y + h;
 
-					x2 = (int)(model[m].showNorm[i].x * zoom) + w;
-					y2 = (int)(model[m].showNorm[i].y * zoom) + h;
+					x2 = (int)model[m].showNorm[i].x + w;
+					y2 = (int)model[m].showNorm[i].y + h;
 
 					cairo_move_to(cr, x1, y1);
 					cairo_line_to(cr, x2, y2);
