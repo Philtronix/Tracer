@@ -10,6 +10,7 @@ https://iquilezles.org/articles/normals/<br>
 http://www.sunshine2k.de/coding/java/TriangleRasterization/TriangleRasterization.html<br>
 http://en.wikipedia.org/wiki/Slope<br>
 https://www.danielsieger.com/blog/2021/05/03/generating-primitive-shapes.html<br>
+https://www.scratchapixel.com/index.php?redirect
 
 GTK:
 Treeview : https://www.cs.uni.edu/~okane/Code/Glade%20Cookbook/

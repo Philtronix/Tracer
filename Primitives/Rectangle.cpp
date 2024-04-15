@@ -132,7 +132,6 @@ Rectangle::Rectangle(int width, int height, int numRows, int numColumns, Vec3D p
     // Other variables    
     numSurf = numRows * numColumns * 2;
     numP = (numRows + 1) * (numColumns + 1);
-    zoom = 1;
     position = pos;
 
 	Mesh_normalise();

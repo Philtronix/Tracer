@@ -77,7 +77,6 @@ Cube::Cube(int length, int width, int height, Vec3D pos)
     // Other variables    
     numSurf  = 12;
     numP     = 8;
-    zoom     = 1;
     numNorm  = 8;
     position = pos;
 

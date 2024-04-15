@@ -53,14 +53,16 @@ public:
 	int		numP;
 	int		numSurf;
 	int		numNorm;
-	double	zoom;
 	Vec3D	position;
 	bool	show;
 	char	name[100];
+	double  zoom;
+	double  rotateX;
+	double  rotateY;
+	double  rotateZ;
 
 	// How to manipulate model to make it ove from object space to world space
 	Matrix4 world;
-
 
 private:
 	int   ReadLine(char *dst, int *nBytes, FILE *fp);

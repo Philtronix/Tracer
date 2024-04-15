@@ -62,7 +62,6 @@ Cylinder::Cylinder(int height, int radius, int resolution, Vec3D pos)
     // Other variables    
     numSurf  = surfaces.size();
     numP     = data.size();
-    zoom     = 1;
     numNorm  = 0;
     position = pos;
 

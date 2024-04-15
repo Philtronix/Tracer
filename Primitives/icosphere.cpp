@@ -173,7 +173,6 @@ Icosphere::Icosphere(int radius, int recursionLevel, Vec3D pos)
     // Other variables    
     numSurf = surfaces.size();
     numP = data.size();
-    zoom = 1;
     position = pos;
 
 	Mesh_normalise();

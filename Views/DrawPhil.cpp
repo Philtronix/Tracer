@@ -352,8 +352,8 @@ static void ProcessScanLine(GdkPixbuf *pixbuf, SCANLINEDATA data, Vec3D pa, Vec3
     int ex = (int)Interpolate(pc.x, pd.x, gradient2);
 
     // starting Z & ending Z
-    double z1 = Interpolate(pa.z, pb.z, gradient1);
-    double z2 = Interpolate(pc.z, pd.z, gradient2);
+//    double z1 = Interpolate(pa.z, pb.z, gradient1);
+//    double z2 = Interpolate(pc.z, pd.z, gradient2);
 
     // drawing a line from left (sx) to right (ex) 
 	guchar red;
@@ -361,9 +361,9 @@ static void ProcessScanLine(GdkPixbuf *pixbuf, SCANLINEDATA data, Vec3D pa, Vec3
 	guchar blue;
     for (int x = sx; x < ex; x++)
     {
-        double gradient = (x - sx) / (double)(ex - sx);
+//        double gradient = (x - sx) / (double)(ex - sx);
 
-        double z = Interpolate(z1, z2, gradient);
+//        double z = Interpolate(z1, z2, gradient);
         double ndotl = data.ndotla;
         // changing the color value using the cosine of the angle
         // between the light vector and the normal vector

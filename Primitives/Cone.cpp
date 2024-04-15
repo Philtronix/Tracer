@@ -53,7 +53,6 @@ Cone::Cone(int height, int radius, int resolution, Vec3D pos)
     // Other variables
     numSurf  = surfaces.size();
     numP     = data.size();
-    zoom     = 1;
     position = pos;
 
     // obj +1 correct

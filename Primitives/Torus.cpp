@@ -67,7 +67,6 @@ Torus::Torus(int radial_resolution, int tubular_resolution, double radius, doubl
     // Other variables    
     numSurf  = surfaces.size();
     numP     = (tubular_resolution * radial_resolution);
-    zoom     = 1;
     numNorm  = 0;
     position = pos;
 
